@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<!-- saved from url=(0064)https://www.pythonguis.com/tutorials/qprocess-external-programs/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+
+
+    <title>
+            Run external programs in PyQt5 with QProcess, with streams and progress bars
+
+    </title>
+
+    
+    <meta name="referrer" content="origin">
+    <meta http-equiv="content-language" content="en-us">
+
+<meta property="og:title" content="Run external programs in PyQt5 with QProcess, with streams and progress bars">
+<meta name="twitter:title" content="Run external programs in PyQt5 with QProcess, with streams and progress bars">
+<meta property="og:url" content="https://www.pythonguis.com/tutorials/qprocess-external-programs/">
+<meta name="twitter:url" content="https://www.pythonguis.com/tutorials/qprocess-external-programs/">
+
+
+
+<meta name="description" content="Run background programs without impacting your UI. So far we&#39;ve looked at how to run work in separate threads, allowing you to do complex tasks without interrupting your UI.">
+<meta property="og:description" content="Run background programs without impacting your UI. So far we&#39;ve looked at how to run work in separate threads, allowing you to do complex tasks without interrupting your UI.">
+<meta name="twitter:description" content="Run background programs without impacting your UI. So far we&#39;ve looked at how to run work in separate threads, allowing you to do complex tasks without interrupting your UI.">
+
+
+
+
+<link href="https://www.pythonguis.com/tutorials/qprocess-external-programs/" rel="canonical">
+
+<meta property="og:site_name" content="Python GUIs">
+
+<meta itemprop="datePublished" content="2020-11-11">
+<meta property="article:published_time" content="2020-11-11T22:00:00+00:00">
+
+<meta itemprop="dateModified" content="2022-08-11">
+<meta property="article:modified_time" content="2022-08-11T09:37:38+00:00">
+
+
+<meta property="article:tag" content="process">
+<meta property="article:tag" content="concurrency">
+<meta property="article:tag" content="responsive">
+<meta property="article:tag" content="gui">
+<meta property="article:tag" content="qt">
+<meta property="article:tag" content="pyqt">
+<meta property="article:tag" content="pyqt5">
+<meta property="article:tag" content="performance">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="qt5">
+<meta property="article:tag" content="pyqt5-concurrency">
+
+<meta property="keywords" content="process,concurrency,responsive,gui,qt,pyqt,pyqt5,performance,python,qt5,pyqt5-concurrency">
+
+
+
+<meta property="og:type" content="article">
+
+
+<meta property="og:image" content="https://www.pythonguis.com/images/courses/qt/concurrent.png">
+<meta name="twitter:image:src" content="https://www.pythonguis.com/images/courses/qt/concurrent.png">
+<meta name="twitter:card" content="summary_large_image">
+
+
+<script type="application/ld+json">
+    {
+    "@context": "http://schema.org",
+    "@type": "TechArticle",
+    "headline": "Run external programs in PyQt5 with QProcess, with streams and progress bars",
+    "image": "https://www.pythonguis.com/images/courses/qt/concurrent.png",
+    "keywords": "process,concurrency,responsive,gui,qt,pyqt,pyqt5,performance,python,qt5,pyqt5-concurrency",
+    "url": "https://www.pythonguis.com/tutorials/qprocess-external-programs/",
+    "author": {
+        "@type": "Person",
+        "name": "Martin Fitzpatrick",
+        "url": "https://www.mfitzp.com"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "Python GUIs",
+        "url": "https://www.pythonguis.com",
+        "logo": {
+            "@type": "Imageobj",
+            "url": "https://www.pythonguis.com/theme/images/logo-card.png",
+            "name": "Python GUIs Logo"
+        }
+    },
+    "datePublished": "2020-11-11 22:00:00+00:00",
+    "dateModified": "2022-08-11 09:37:38+00:00"
+    }
+    </script>
+
+
+<script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement":
+        [
+        {
+        "@type": "ListItem",
+        "position": 0,
+        "item":
+        {
+          "@id": "https://www.pythonguis.com/tutorials/",
+          "name": "tutorials"
+          }
+      },
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item":
+          {
+            "@id": "https://www.pythonguis.com/pyqt5-tutorial/#concurrent-execution",            "name": "Threads & Processes"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "item":
+          {
+            "@id": "https://www.pythonguis.com/tutorials/qprocess-external-programs/",
+            "name": "Using QProcess to run external programs"
+            }
+        }
+        ]
+      }
+      </script>
+
+
+<link rel="author" href="https://www.pythonguis.com/">
+<link rel="publisher" href="https://www.pythonguis.com/"><meta name="flattr:id" content="gwy91w">
+<meta name="google-site-verification" content="Ogw6ZN_S7dzUc9huqkiLOeI_BH8F__4Ft8pNXQVU1Cw">
+<meta name="google-site-verification" content="tnbPDWRORDk2SjXzRhyh5HOarf2hDojT07FQS2zcMUY">
+<meta name="google-site-verification" content="2DFeXMiIAIVr20q8LLteYxffew35Pp89MXa7Hyy0_IM">
+<meta name="google-site-verification" content="aDPLnwleWQc6nHK2vIMKXY5kUBDHFUPNJ75QcdcdEss">
+<meta name="msvalidate.01" content="79DE55785B481065302BA20C0A64D33F">
+
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="cleartype" content="on">
+
+<link rel="shortcut icon" href="https://www.pythonguis.com/favicon.ico">
+<link rel="apple-touch-icon" href="https://www.pythonguis.com/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.gstatic.com/">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com/">
+<link rel="preconnect" href="https://ik.imagekit.io/">
+
+<!-- CSS, will be bundled -->
+<link rel="stylesheet" href="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/pure-min.css" type="text/css">
+<link rel="stylesheet" href="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/grids-responsive-min.css" type="text/css">
+<link rel="stylesheet" href="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/main.css" type="text/css">
+
+<!-- Font preload -->
+<link rel="preload" as="style" href="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/css2">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,700;1,400;1,700&amp;display=swap">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&amp;display=swap">
+<link rel="preload" as="style" href="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/css2(2)">
+
+<link rel="preload" as="style" href="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/all.min.css">
+
+<!-- Font actual load, onload swap -->
+<link rel="stylesheet" href="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/css2" media="all" onload="this.media=&#39;all&#39;">
+<link rel="stylesheet" href="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/css2(1)" media="all" onload="this.media=&#39;all&#39;">
+<link rel="stylesheet" href="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/css2(2)" media="all" onload="this.media=&#39;all&#39;">
+
+<link rel="stylesheet" href="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/all.min.css" media="all" onload="this.media=&#39;all&#39;">
+
+<!-- Apple touch icons -->
+<link rel="apple-touch-icon" href="https://www.pythonguis.com/apple-touch-icon.png">
+<link rel="apple-touch-icon-precomposed" href="https://www.pythonguis.com/apple-touch-icon-precomposed.png">
+
+<!-- <link rel="manifest" href="/manifest.json" /> -->
+
+<link href="https://www.pythonguis.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Python GUIs Full Atom Feed">
+<link href="https://www.pythonguis.com/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="Python GUIs Atom Feed">
+<link href="https://www.pythonguis.com/feeds/rss.xml" type="application/rss+xml" rel="alternate" title="Python GUIs RSS Feed">
+<link href="https://www.pythonguis.com/feeds/tutorials.atom.xml" type="application/atom+xml" rel="alternate" title="Python GUIs tutorials Atom Feed">
+<link href="https://www.pythonguis.com/feeds/tutorials.rss.xml" type="application/rss+xml" rel="alternate" title="Python GUIs tutorials RSS Feed">
+
+
+<!--    <script src="https://cdn.podia.com/embeds.js" async="async"></script> -->
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script defer="" data-domain="pythonguis.com" src="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/plausible.js.download"></script>
+<script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
+
+<!-- MailerLite Universal
+<script>
+  (function (m, a, i, l, e, r) {
+    m['MailerLiteObject'] = e; function f() {
+      var c = { a: arguments, q: [] }; var r = this.push(c); return "number" != typeof r ? r : f.bind(c.q);
+    }
+    f.q = f.q || []; m[e] = m[e] || f.bind(f.q); m[e].q = m[e].q || f.q; r = a.createElement(i);
+    var _ = a.getElementsByTagName(i)[0]; r.async = 1; r.src = l + '?v' + (~~(new Date().getTime() / 1000000));
+    _.parentNode.insertBefore(r, _);
+  })(window, document, 'script', 'https://static.mailerlite.com/js/universal.js', 'ml');
+
+  var ml_account = ml('accounts', '1083120', 'o8o0o8k0r4', 'load');
+</script>
+<script>
+  var ml_webform_793852 = ml_account('webforms', '793852', 'e6q5x4', 'load');
+  ml_webform_793852('animation', 'fadeIn');
+</script>
+End MailerLite Subscribe -->
+
+<script>(function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}})(window,'rewardful');</script>
+<script async="" src="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/rw.js.download" data-rewardful="c7bf74"></script>
+    <style>
+html{-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0;font-family:"Montserrat",sans-serif}[v-cloak]{display:none !important}.logo-small{width:222px;height:32px}.navigation-collapsed,.menu-item-collapsed{display:none !important}.navigation-expanded,.menu-item-expanded{display:inline-block}@media screen and (max-width:1200px){.navigation-collapsed,.menu-item-collapsed{display:inline-block !important}.menu-item-collapsed{display:block !important}.navigation-expanded,.menu-item-expanded,.expanded{display:none !important}}#welcome{background-color:#ffd141;text-align:center;padding:.5rem 1rem;margin:0}#welcome p,#welcome a{color:#0d1f2d;font-size:.9rem;margin:0}body.wide-top #container-top{max-width:1110px}body.wide #container{max-width:1110px}body.wide-bottom #container-bottom{max-width:1110px}body.full-top #container-top{max-width:100%}body.full #container{max-width:100%}body.full-bottom #container-bottom{max-width:100%}body.article #container,body.page #container,.header-center,.article-header-center,.category-header-center,.tag-header-center{margin:0 auto}    </style>
+
+
+
+<link rel="stylesheet" type="text/css" href="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/animate.css" media="all"><link rel="stylesheet" type="text/css" href="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/paddle.css" media="all"><link rel="prefetch"><script style="display: none;">var tvt = tvt || {}; tvt.captureVariables = function(a){for(var b=
+new Date,c={},d=Object.keys(a||{}),e=0,f;f=d[e];e++)if(a.hasOwnProperty(f)&&"undefined"!=typeof a[f])try{var g=[];c[f]=JSON.stringify(a[f],function(h,k){try{if("function"!==typeof k){if("object"===typeof k&&null!==k){if(k instanceof HTMLElement||k instanceof Node||-1!=g.indexOf(k))return;g.push(k)}return k}}catch(m){}})}catch(h){}a=document.createEvent("CustomEvent");a.initCustomEvent("TvtRetrievedVariablesEvent",!0,!0,{variables:c,date:b});window.dispatchEvent(a)};window.setTimeout(function() {tvt.captureVariables({'dataLayer.hide': (function(a){a=a.split(".");for(var b=window,c=0;c<a.length&&(b=b[a[c]],b);c++);return b})('dataLayer.hide'),'gaData': window['gaData'],'dataLayer': window['dataLayer']})}, 2000);</script></head>
+
+<body class="article  tagged-process  tagged-concurrency  tagged-responsive  tagged-gui  tagged-qt  tagged-pyqt  tagged-pyqt5  tagged-performance  tagged-python  tagged-qt5  tagged-pyqt5-concurrency  academy " data-instant-intensity="mousedown">
+    <div id="app"><div id="layout" class=""><a href="https://www.pythonguis.com/tutorials/qprocess-external-programs/#menu" id="menuLink" class="menu-link"><span></span></a> <div id="menu"><div class="pure-menu"><ul class="pure-menu-list"><li class="pure-menu-item menu-item-divided">Python GUIs</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/latest/" class="pure-menu-link">Latest</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/faq/" class="pure-menu-link">FAQ</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/pyqt5/" class="pure-menu-link">PyQt5 <i class="fas fa-circle library-marker-pyqt5"></i></a></li> <li class="pure-menu-item menu-item-divided">Basics</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/creating-your-first-pyqt-window/" class="pure-menu-link">Create a PyQt5 app</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/pyqt-signals-slots-events/" class="pure-menu-link">PyQt5 Signals</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/pyqt-basic-widgets/" class="pure-menu-link">PyQt5 Widgets</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/pyqt-layouts/" class="pure-menu-link">PyQt5 Layouts</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/pyqt-actions-toolbars-menus/" class="pure-menu-link">PyQt5 Menus</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/pyqt-dialogs/" class="pure-menu-link">PyQt5 Dialogs</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/creating-multiple-windows/" class="pure-menu-link">Multi-window PyQt5</a></li> <li class="pure-menu-item menu-item-divided">Qt Designer</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/first-steps-qt-creator/" class="pure-menu-link">First Qt Designer app</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/qt-designer-gui-layout/" class="pure-menu-link">Qt Designer Layouts</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/creating-dialogs-qt-designer/" class="pure-menu-link">Dialogs in Qt Designer</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/qresource-system/" class="pure-menu-link">The QResource System</a></li> <li class="pure-menu-item menu-item-divided">Concurrency</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/" class="pure-menu-link">Long-running tasks</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/qprocess-external-programs/" class="pure-menu-link">External processes</a></li> <li class="pure-menu-item menu-item-divided">Model Views</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/modelview-architecture/" class="pure-menu-link">Model Views</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/qtableview-modelviews-numpy-pandas/" class="pure-menu-link">Pandas &amp; Numpy Views</a></li> <li class="pure-menu-item menu-item-divided">Plotting</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/plotting-pyqtgraph/" class="pure-menu-link">Plotting with PyQtGraph</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/plotting-matplotlib/" class="pure-menu-link">Plotting with Matplotlib</a></li> <li class="pure-menu-item menu-item-divided">QGraphics</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/pyqt-qgraphics-vector-graphics/" class="pure-menu-link">Vector Graphics</a></li> <li class="pure-menu-item menu-item-divided">Custom Widgets</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/bitmap-graphics/" class="pure-menu-link">Bitmap Graphics</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/creating-your-own-custom-widgets/" class="pure-menu-link">Custom Widgets</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/qpropertyanimation/" class="pure-menu-link">Animating Widgets</a></li> <li class="pure-menu-item menu-item-divided">Further</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/transmitting-extra-data-qt-signals/" class="pure-menu-link">Modifying Signals</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/system-tray-mac-menu-bar-applications-pyqt/" class="pure-menu-link">Taskbar apps</a></li> <li class="pure-menu-item menu-item-divided">Packaging</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/packaging-pyqt5-pyside2-applications-windows-pyinstaller/" class="pure-menu-link">Packaging for Windows</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/packaging-pyqt5-applications-pyinstaller-macos-dmg/" class="pure-menu-link">Packaging for macOS</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/packaging-pyqt5-applications-linux-pyinstaller/" class="pure-menu-link">Packaging for Linux</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/packaging-data-files-pyqt5-with-qresource-system/" class="pure-menu-link">Packaging QResources</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/packaging-pyqt5-apps-fbs/" class="pure-menu-link">Packaging with fbs</a></li> <li class="pure-menu-item menu-item-divided">Resources</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/books/" class="pure-menu-link">Books</a></li> <li class="pure-menu-item menu-item-divided">Services</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/hire/" class="pure-menu-link">Consulting</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/contact/" class="pure-menu-link">Contact</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/about/" class="pure-menu-link">About</a></li> <li class="pure-menu-item menu-item-divided">Libraries</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/pyqt6/" class="pure-menu-link">PyQt6</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/pyside6/" class="pure-menu-link">PySide6</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tkinter/" class="pure-menu-link">Tkinter</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/pyside2/" class="pure-menu-link">PySide2</a></li></ul></div></div> <div id="navigation" class="pure-g"><div class="pure-u-1-1"><div class="navigation-bar pure-menu pure-menu-horizontal menu-right library-selector"><ul class="pure-menu-list"><li id="searchnav" class="pure-menu-item"><form action="https://www.pythonguis.com/search" method="get"><label hidden="hidden" for="search-input">Search Python GUIs</label> <input type="text" name="q" placeholder="Search Python GUIs"> <input type="submit" value="Search"></form></li></ul></div></div></div> <div id="navigation-middle"><a href="https://www.pythonguis.com/pyqt5/" title="Python GUIs" class="logo pure-img"></a></div> <div id="searchtop"><form action="https://www.pythonguis.com/search" method="get"><label hidden="hidden" for="search-input">Search Python GUIs</label> <input type="text" name="q" placeholder="Search Python GUIs"> <input type="submit" value="Search"></form></div> <a name="top"></a> <div id="main"><div id="container-top" class="pure-g"><div id="content-upper" class="pure-u-1-1 l-box content-spacer"><div id="breadcrumbs" class="pure-u-1-1"><ol><li><a href="https://www.pythonguis.com/pyqt5-tutorial/"><i class="fas fa-book"></i>
+        PyQt5 Tutorial
+      </a>/
+    </li> <li><a href="https://www.pythonguis.com/pyqt5-tutorial/#concurrent-execution">
+        Threads &amp; Processes
+      </a></li></ol></div> <div class="pure-u-1-1 article-header"><div class="article-header-center"><h1><span>Using QProcess to run external programs<br><small> Run background programs without impacting your UI</small></span></h1></div></div></div></div> <div id="container" class="pure-g"><div class="pure-u-1-1 l-box"><div class="byline"><span class="byline-part">
+    by <a href="https://www.pythonguis.com/authors/martin-fitzpatrick/">Martin Fitzpatrick</a></span> <span class="byline-part"><i class="fas fa-calendar"></i>
+  Last updated <time datetime="2022-08-11 09:37:38+00:00">11 August 2022</time></span> <span class="byline-part"><span class="library-indicator library-indicator-pyqt">PyQt5</span></span> <span class="byline-part"><i class="fas fa-folder"></i> <a href="https://www.pythonguis.com/pyqt5-tutorial/#concurrent-execution">
+      Threads &amp; Processes
+    </a></span></div> <div class="article-curriculum"><h4><a href="https://www.pythonguis.com/pyqt5-tutorial/"><i class="fas fa-book"></i>
+      PyQt5 Tutorial
+    </a>
+    —
+    <a href="https://www.pythonguis.com/pyqt5-tutorial/#concurrent-execution">Threads &amp; Processes</a></h4> <ul class="course-lessons fa-ul"><li class="lesson-row"><span class="fa-li"><i class="far fa-circle"></i></span> <a href="https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/">Multithreading PyQt5 applications with QThreadPool</a></li> <li class="lesson-row"><span class="fa-li"><i class="fas fa-hand-point-right"></i></span> <a href="https://www.pythonguis.com/tutorials/qprocess-external-programs/">Using QProcess to run external programs</a></li></ul></div> <p class="crosslinks">
+    This tutorial is also available for
+    <a href="https://www.pythonguis.com/tutorials/pyside6-qprocess-external-programs/">PySide6</a>
+,     <a href="https://www.pythonguis.com/tutorials/pyqt6-qprocess-external-programs/">PyQt6</a>
+ and     <a href="https://www.pythonguis.com/tutorials/pyside-qprocess-external-programs/">PySide2</a></p> <!----> <article class="post"><a name="top"></a> <div id="article-main-body" class="article-wrap article-main-body"><p>So far we've looked at how to run work in separate threads, allowing you to do complex tasks without interrupting your UI. This works great when using Python libraries to accomplish tasks, but sometimes you want to run external applications, passing parameters and getting the results.</p> <p>In this tutorial we'll look at <code>QProcess</code>, the Qt system for running external programs from within your own app.</p> <h2 id="the-external-program">The external program</h2> <p>To be able to test running external programs with <code>QProcess</code> we need to have something to run. Here we'll create a simple Python script for that purpose, which we can then launch from within our application. Put the following in a file, and save it with the name <code>dummy_script.py</code>.</p> <p class="admonition admonition-note"><span class="admonition-kind"><i class="fas fa-pencil-alt"></i></span>  I'm using Python here to be sure it works on all platforms. If you have an existing command line tool you'd like to test with, you can substitute that instead.</p> <p>Don't worry too much about the contents of this script, it's just a series of print (stream write) statements with a half second wait after. This simulates a long-running external program which is printing out periodic status messages. Later we'll see how to extract data from this output.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs"><span class="hljs-keyword">import</span> sys
+<span class="hljs-keyword">import</span> time
+
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">flush_then_wait</span>():</span>
+    sys.stdout.flush()
+    sys.stderr.flush()
+    time.sleep(<span class="hljs-number">0.5</span>)
+
+
+sys.stdout.write(<span class="hljs-string">"Script stdout 1\n"</span>)
+sys.stdout.write(<span class="hljs-string">"Script stdout 2\n"</span>)
+sys.stdout.write(<span class="hljs-string">"Script stdout 3\n"</span>)
+sys.stderr.write(<span class="hljs-string">"Total time: 00:05:00\n"</span>)
+sys.stderr.write(<span class="hljs-string">"Total complete: 10%\n"</span>)
+flush_then_wait()
+
+sys.stdout.write(<span class="hljs-string">"name=Martin\n"</span>)
+sys.stdout.write(<span class="hljs-string">"Script stdout 4\n"</span>)
+sys.stdout.write(<span class="hljs-string">"Script stdout 5\n"</span>)
+sys.stderr.write(<span class="hljs-string">"Total complete: 30%\n"</span>)
+flush_then_wait()
+
+sys.stderr.write(<span class="hljs-string">"Elapsed time: 00:00:10\n"</span>)
+sys.stderr.write(<span class="hljs-string">"Elapsed time: 00:00:50\n"</span>)
+sys.stderr.write(<span class="hljs-string">"Total complete: 50%\n"</span>)
+sys.stdout.write(<span class="hljs-string">"country=Nederland\n"</span>)
+flush_then_wait()
+
+sys.stderr.write(<span class="hljs-string">"Elapsed time: 00:01:10\n"</span>)
+sys.stderr.write(<span class="hljs-string">"Total complete: 100%\n"</span>)
+sys.stdout.write(<span class="hljs-string">"Script stdout 6\n"</span>)
+sys.stdout.write(<span class="hljs-string">"Script stdout 7\n"</span>)
+sys.stdout.write(<span class="hljs-string">"website=www.mfitzp.com\n"</span>)
+flush_then_wait()
+
+</code></pre></div> <p>Now we have our <code>dummy_script.py</code> we can run it from within our Qt application.</p> <h2 id="basic-application">Basic application</h2> <p>To experiment with running programs through <code>QProcess</code> we need a skeleton application. This is shown below -- a simple window with a <code>QPushButton</code> and <code>QTextArea</code>. Pressing the push button calls our custom slot <code>start_process</code>, in which we'll execute our external process.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs"><span class="hljs-keyword">from</span> PyQt5.QtWidgets <span class="hljs-keyword">import</span> (QApplication, QMainWindow, QPushButton, QPlainTextEdit,
+                                QVBoxLayout, QWidget)
+<span class="hljs-keyword">from</span> PyQt5.QtCore <span class="hljs-keyword">import</span> QProcess
+<span class="hljs-keyword">import</span> sys
+
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MainWindow</span>(<span class="hljs-params">QMainWindow</span>):</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self</span>):</span>
+        <span class="hljs-built_in">super</span>().__init__()
+
+        self.btn = QPushButton(<span class="hljs-string">"Execute"</span>)
+        self.btn.pressed.connect(self.start_process)
+        self.text = QPlainTextEdit()
+        self.text.setReadOnly(<span class="hljs-literal">True</span>)
+
+        l = QVBoxLayout()
+        l.addWidget(self.btn)
+        l.addWidget(self.text)
+
+        w = QWidget()
+        w.setLayout(l)
+
+        self.setCentralWidget(w)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">start_process</span>(<span class="hljs-params">self</span>):</span>
+        <span class="hljs-comment"># We'll run our process here.</span>
+        <span class="hljs-keyword">pass</span>
+
+app = QApplication(sys.argv)
+
+w = MainWindow()
+w.show()
+
+app.exec_()
+</code></pre></div> <p>Make sure it works, there's not much to look at yet -- pressing the button doesn't do anything either.</p> <p><img alt="The skeleton application window" src="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/qprocess-skeleton.png"> <em>The skeleton application.</em></p> <h2 id="using-qprocess-to-execute-external-applications">Using <code>QProcess</code> to execute external applications.</h2> <p>Executing external programs is fairly straightforward with QProcess. First you create a <code>QProcess</code> object and then call <code>.start()</code> passing in the command to execute and a <code>list</code> of string arguments.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs">p = QProcess()
+p.start(<span class="hljs-string">"&lt;program&gt;"</span>, [&lt;arguments&gt;])
+</code></pre></div> <p>For our example we're running the custom <code>dummy_script.py</code> script with Python, so our executable is <code>python</code> (or <code>python3</code>) and our arguments are just <code>dummy_script.py</code>.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs">p = QProcess()
+p.start(<span class="hljs-string">"python3"</span>, [<span class="hljs-string">'dummy_script.py'</span>])
+</code></pre></div> <p>If you are running another command line program you'd need to specify arguments for it. For example, using <code>ffmpeg</code> to extract information from a video file.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs">p = QProcess()
+p.start(<span class="hljs-string">"ffprobe"</span>, [<span class="hljs-string">'-show_format'</span>, <span class="hljs-string">'-show_streams'</span>, <span class="hljs-string">'a.mp4.py'</span>])
+</code></pre></div> <p>Use this same approach with your own command line program, remembering to split the arguments up into individual items in the list.</p> <p>We can take the <code>p.start("python3", ['dummy_script.py'])</code> example and add it to our application skeleton as follows. We also add a helper method <code>message()</code> to write messages into our text box in the UI.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs"><span class="hljs-keyword">from</span> PyQt5.QtWidgets <span class="hljs-keyword">import</span> (QApplication, QMainWindow, QPushButton, QPlainTextEdit,
+                                QVBoxLayout, QWidget)
+<span class="hljs-keyword">from</span> PyQt5.QtCore <span class="hljs-keyword">import</span> QProcess
+<span class="hljs-keyword">import</span> sys
+
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MainWindow</span>(<span class="hljs-params">QMainWindow</span>):</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self</span>):</span>
+        <span class="hljs-built_in">super</span>().__init__()
+
+        self.btn = QPushButton(<span class="hljs-string">"Execute"</span>)
+        self.btn.pressed.connect(self.start_process)
+        self.text = QPlainTextEdit()
+        self.text.setReadOnly(<span class="hljs-literal">True</span>)
+
+        l = QVBoxLayout()
+        l.addWidget(self.btn)
+        l.addWidget(self.text)
+
+        w = QWidget()
+        w.setLayout(l)
+
+        self.setCentralWidget(w)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">message</span>(<span class="hljs-params">self, s</span>):</span>
+        self.text.appendPlainText(s)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">start_process</span>(<span class="hljs-params">self</span>):</span>
+        self.message(<span class="hljs-string">"Executing process."</span>)
+        self.p = QProcess()  <span class="hljs-comment"># Keep a reference to the QProcess (e.g. on self) while it's running.</span>
+        self.p.start(<span class="hljs-string">"python3"</span>, [<span class="hljs-string">'dummy_script.py'</span>])
+
+
+app = QApplication(sys.argv)
+
+w = MainWindow()
+w.show()
+
+app.exec_()
+</code></pre></div> <p class="admonition admonition-note"><span class="admonition-kind"><i class="fas fa-pencil-alt"></i></span>  Notice that you must keep a reference to the created <code>QProcess</code> object while it's running, e.g. on <code>self.p</code>. If not, then the object will be deleted prematurely and you'll see a <code>QProcess: Destroyed while process ("python3") is still running.</code> error.</p> <p>If you run this example and press the button, nothing will happen. The external script is running but you can't see the output.</p> <p><img alt="Execution message is shown" src="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/qprocess-executed.png"> <em>The execution message is shown, but not much else.</em></p> <p>If you press the button repeatedly, you may find that you see a message like this --</p> <div class="code-block"><span class="code-block-language code-block-bash">bash</span> <pre><code class="bash hljs">QProcess: Destroyed <span class="hljs-keyword">while</span> process (<span class="hljs-string">"python3"</span>) is still running.
+</code></pre></div> <p>This is because if you press the button <em>while a process is already running</em>, creating the new process replaces the reference to the existing <code>QProcess</code> object in <code>self.p</code>, deleting it. We can avoid this by checking the value of <code>self.p</code> before executing a new process, and hooking up a <em>finished</em> signal to reset it back to <code>None</code>, e.g.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs"><span class="hljs-keyword">from</span> PyQt5.QtWidgets <span class="hljs-keyword">import</span> (QApplication, QMainWindow, QPushButton, QPlainTextEdit,
+                                QVBoxLayout, QWidget)
+<span class="hljs-keyword">from</span> PyQt5.QtCore <span class="hljs-keyword">import</span> QProcess
+<span class="hljs-keyword">import</span> sys
+
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MainWindow</span>(<span class="hljs-params">QMainWindow</span>):</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self</span>):</span>
+        <span class="hljs-built_in">super</span>().__init__()
+
+        self.p = <span class="hljs-literal">None</span>  <span class="hljs-comment">#&nbsp;Default empty value.</span>
+
+        self.btn = QPushButton(<span class="hljs-string">"Execute"</span>)
+        self.btn.pressed.connect(self.start_process)
+        self.text = QPlainTextEdit()
+        self.text.setReadOnly(<span class="hljs-literal">True</span>)
+
+        l = QVBoxLayout()
+        l.addWidget(self.btn)
+        l.addWidget(self.text)
+
+        w = QWidget()
+        w.setLayout(l)
+
+        self.setCentralWidget(w)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">message</span>(<span class="hljs-params">self, s</span>):</span>
+        self.text.appendPlainText(s)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">start_process</span>(<span class="hljs-params">self</span>):</span>
+        <span class="hljs-keyword">if</span> self.p <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:  <span class="hljs-comment"># No process running.</span>
+            self.message(<span class="hljs-string">"Executing process"</span>)
+            self.p = QProcess()  <span class="hljs-comment"># Keep a reference to the QProcess (e.g. on self) while it's running.</span>
+            self.p.finished.connect(self.process_finished)  <span class="hljs-comment">#&nbsp;Clean up once complete.</span>
+            self.p.start(<span class="hljs-string">"python3"</span>, [<span class="hljs-string">'dummy_script.py'</span>])
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">process_finished</span>(<span class="hljs-params">self</span>):</span>
+        self.message(<span class="hljs-string">"Process finished."</span>)
+        self.p = <span class="hljs-literal">None</span>
+
+
+app = QApplication(sys.argv)
+
+w = MainWindow()
+w.show()
+
+app.exec_()
+</code></pre></div> <p>Running this now, you can start the process and -- once it has completed -- start it again. Each time the process completes, you'll see the "Process finished." message in the text box.</p> <p><img alt="Process finished message is shown" src="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/qprocess-finished.png"> <em>The Process finished message is shown once it completes.</em></p> <div class="product-block-container"><div class="pure-u-1-1 product-callout">Over <strong>10,000 developers</strong> have bought Create GUI Applications with Python &amp; Qt!</div> <div class="pure-g product-block"><div class="pure-u-1-1 product-banner"><a href="https://www.pythonguis.com/pyqt5-book/"><img src="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/pyqt5-book.png" alt="Create GUI Applications with Python &amp; Qt5" loading="lazy"></a> <div class="product-block-buttons"><a href="https://www.pythonguis.com/pyqt5-book/" target="_blank" class="pure-button button-info">More info</a> <a href="https://checkout.paddle.com/checkout/product/561130" rel="nofollow" data-theme="none" data-product="561130" data-coupon="" class="paddle_button pure-button button-buy" data-init="true">
+            Get the book
+        </a></div></div> <div class="pure-u-1-1 product-block-coupon"><p class="sale-notice"><strong>To support developers in </strong> I give a
+    <strong><i class="fas fa-gift"></i> % discount</strong>
+    with the code <strong></strong> — Enjoy!
+    </p> <!----></div></div> <div class="pure-g product-footer"><div class="pure-u-1-1 product-alternate-links">
+    Also available via
+<a href="https://mfitzp.gumroad.com/l/jgxBY/" class="buy-link">Gumroad</a><a href="https://www.leanpub.com/create-simple-gui-applications/" class="buy-link">Leanpub</a><a href="https://www.amazon.com/dp/B08RB2HRS1/" class="buy-link">Amazon Paperback</a></div></div></div><h2 id="getting-data-from-the-qprocess">Getting data from the <code>QProcess</code></h2> <p>So far we've executed an external program and been notified when it started and stopped, but know nothing about what it's doing.  This is fine in some cases, where you just want the job to run, but often you'll want some more detailed feedback.  Helpfully, <code>QProcess</code> provides a number of signals which can be used to track the progress and state of processes.</p> <p>If you're familiar with running external processes using <code>subprocess</code> in Python, you may be familiar with <em>streams</em>. These are file-like objects you use to retrieve data from a running process. The two standard streams are <em>standard output</em> and <em>standard error</em>. The former receives <em>result</em> data the application is outputting, while the second receives <em>diagnostic</em> or <em>error</em> messages. Depending on what you're interested in, both of these can be useful -- many programs (like our <code>dummy_script.py</code> output progress information to the <em>standard error</em> stream.</p> <p>In Qt land, the same principles apply. The <code>QProcess</code> object has two signals <code>.readyReadStandardOutput</code> and <code>.readyReadStandardError</code> which are used to notify when data is available in the respective streams. We can then read from the process to get the latest data.</p> <p>Below is an example setup for a <code>QProcess</code>, which connects up <code>readyReadStandardOutput</code> and <code>.readyReadStandardError</code> as well as tracking state changes and finish signals.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs">p = QProcess()
+p.readyReadStandardOutput.connect(self.handle_stdout)
+p.readyReadStandardError.connect(self.handle_stderr)
+p.stateChanged.connect(self.handle_state)
+p.finished.connect(self.cleanup)
+p.start(<span class="hljs-string">"python"</span>, [<span class="hljs-string">"dummy_script.py"</span>])
+</code></pre></div> <p>The <code>.stateChanged</code> signal fires whenever the process status changes. Valid values -- defined in the <code>QProcess.ProcessState</code> enum --  are shown below.</p> <table class="pure-table pure-table-horizontal pure-table-tight"><thead><tr><th>Constant</th> <th>Value</th> <th>Description</th></tr></thead> <tbody><tr><td><code>QProcess.NotRunning</code></td> <td>0</td> <td>The process is not running.</td></tr> <tr><td><code>QProcess.Starting</code></td> <td>1</td> <td>The process is starting, but the program has not yet been invoked.</td></tr> <tr><td><code>QProcess.Running</code></td> <td>2</td> <td>The process is running and is ready for reading and writing.</td></tr></tbody></table> <p>Putting that into our example and implementing the handler methods for each gives us the following complete code.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs"><span class="hljs-keyword">from</span> PyQt5.QtWidgets <span class="hljs-keyword">import</span> (QApplication, QMainWindow, QPushButton, QPlainTextEdit,
+                                QVBoxLayout, QWidget)
+<span class="hljs-keyword">from</span> PyQt5.QtCore <span class="hljs-keyword">import</span> QProcess
+<span class="hljs-keyword">import</span> sys
+
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MainWindow</span>(<span class="hljs-params">QMainWindow</span>):</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self</span>):</span>
+        <span class="hljs-built_in">super</span>().__init__()
+
+        self.p = <span class="hljs-literal">None</span>
+
+        self.btn = QPushButton(<span class="hljs-string">"Execute"</span>)
+        self.btn.pressed.connect(self.start_process)
+        self.text = QPlainTextEdit()
+        self.text.setReadOnly(<span class="hljs-literal">True</span>)
+
+        l = QVBoxLayout()
+        l.addWidget(self.btn)
+        l.addWidget(self.text)
+
+        w = QWidget()
+        w.setLayout(l)
+
+        self.setCentralWidget(w)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">message</span>(<span class="hljs-params">self, s</span>):</span>
+        self.text.appendPlainText(s)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">start_process</span>(<span class="hljs-params">self</span>):</span>
+        <span class="hljs-keyword">if</span> self.p <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:  <span class="hljs-comment"># No process running.</span>
+            self.message(<span class="hljs-string">"Executing process"</span>)
+            self.p = QProcess()  <span class="hljs-comment"># Keep a reference to the QProcess (e.g. on self) while it's running.</span>
+            self.p.readyReadStandardOutput.connect(self.handle_stdout)
+            self.p.readyReadStandardError.connect(self.handle_stderr)
+            self.p.stateChanged.connect(self.handle_state)
+            self.p.finished.connect(self.process_finished)  <span class="hljs-comment">#&nbsp;Clean up once complete.</span>
+            self.p.start(<span class="hljs-string">"python3"</span>, [<span class="hljs-string">'dummy_script.py'</span>])
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">handle_stderr</span>(<span class="hljs-params">self</span>):</span>
+        data = self.p.readAllStandardError()
+        stderr = <span class="hljs-built_in">bytes</span>(data).decode(<span class="hljs-string">"utf8"</span>)
+        self.message(stderr)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">handle_stdout</span>(<span class="hljs-params">self</span>):</span>
+        data = self.p.readAllStandardOutput()
+        stdout = <span class="hljs-built_in">bytes</span>(data).decode(<span class="hljs-string">"utf8"</span>)
+        self.message(stdout)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">handle_state</span>(<span class="hljs-params">self, state</span>):</span>
+        states = {
+            QProcess.NotRunning: <span class="hljs-string">'Not running'</span>,
+            QProcess.Starting: <span class="hljs-string">'Starting'</span>,
+            QProcess.Running: <span class="hljs-string">'Running'</span>,
+        }
+        state_name = states[state]
+        self.message(<span class="hljs-string">f"State changed: <span class="hljs-subst">{state_name}</span>"</span>)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">process_finished</span>(<span class="hljs-params">self</span>):</span>
+        self.message(<span class="hljs-string">"Process finished."</span>)
+        self.p = <span class="hljs-literal">None</span>
+
+
+app = QApplication(sys.argv)
+
+w = MainWindow()
+w.show()
+
+app.exec_()
+</code></pre></div> <p>If you run this, you'll see the standard output, standard error, state changes and start/stop messages all being printed to the text box. Note that we convert the states back to friendly strings before output (using a <code>dict</code> to map from the enum values).</p> <p><img alt="Logging standard output and error" src="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/qprocess-output.png"> <em>The output from our custom script is shown in the text box.</em></p> <p>The output handling is a bit tricky and deserves a closer look.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs">        data = self.p.readAllStandardError()
+        stderr = <span class="hljs-built_in">bytes</span>(data).decode(<span class="hljs-string">"utf8"</span>)
+        self.message(stderr)
+</code></pre></div> <p>This is necessary because the <code>QProcess.readAllStandardError</code> and <code>QProcess.readAllStandardOutput</code> return data as bytes, wrapped in a Qt object. We must first convert this to a Python <code>bytes()</code> object, and then <em>decode</em> that bytestream to a string (here using UTF8 encoding).</p> <h2 id="parsing-data-from-process-output">Parsing data from process output</h2> <p>Currently we're just dumping the output from the program into the text box, but what if we wanted to extract some specific data from it? A common use case for this is to track progress from a running program, so we can show a progress bar as it completes.</p> <p>In this example, our demo script <code>dummy_script.py</code> return a series of strings, including lines on <em>standard error</em> which show the current progress complete percentage -- e.g. <code>Total complete: 50%</code>. We can process these lines to a progress, and show this on the statusbar.</p> <p>In the example below, we extract this using a custom <em>regular expression</em>. The <code>simple_percent_parser</code> function matches the <em>standard error</em> stream content and extracts a number between 00-100 for the progress. This value is used to update the progress bar added to the UI.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs"><span class="hljs-keyword">from</span> PyQt5.QtWidgets <span class="hljs-keyword">import</span> (QApplication, QMainWindow, QPushButton, QPlainTextEdit,
+                                QVBoxLayout, QWidget, QProgressBar)
+<span class="hljs-keyword">from</span> PyQt5.QtCore <span class="hljs-keyword">import</span> QProcess
+<span class="hljs-keyword">import</span> sys
+<span class="hljs-keyword">import</span> re
+
+<span class="hljs-comment"># A regular expression, to extract the % complete.</span>
+progress_re = re.<span class="hljs-built_in">compile</span>(<span class="hljs-string">"Total complete: (\d+)%"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">simple_percent_parser</span>(<span class="hljs-params">output</span>):</span>
+    <span class="hljs-string">"""
+    Matches lines using the progress_re regex,
+    returning a single integer for the % progress.
+    """</span>
+    m = progress_re.search(output)
+    <span class="hljs-keyword">if</span> m:
+        pc_complete = m.group(<span class="hljs-number">1</span>)
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">int</span>(pc_complete)
+
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MainWindow</span>(<span class="hljs-params">QMainWindow</span>):</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self</span>):</span>
+        <span class="hljs-built_in">super</span>().__init__()
+
+        self.p = <span class="hljs-literal">None</span>
+
+        self.btn = QPushButton(<span class="hljs-string">"Execute"</span>)
+        self.btn.pressed.connect(self.start_process)
+        self.text = QPlainTextEdit()
+        self.text.setReadOnly(<span class="hljs-literal">True</span>)
+
+        self.progress = QProgressBar()
+        self.progress.setRange(<span class="hljs-number">0</span>, <span class="hljs-number">100</span>)
+
+        l = QVBoxLayout()
+        l.addWidget(self.btn)
+        l.addWidget(self.progress)
+        l.addWidget(self.text)
+
+        w = QWidget()
+        w.setLayout(l)
+
+        self.setCentralWidget(w)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">message</span>(<span class="hljs-params">self, s</span>):</span>
+        self.text.appendPlainText(s)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">start_process</span>(<span class="hljs-params">self</span>):</span>
+        <span class="hljs-keyword">if</span> self.p <span class="hljs-keyword">is</span> <span class="hljs-literal">None</span>:  <span class="hljs-comment"># No process running.</span>
+            self.message(<span class="hljs-string">"Executing process"</span>)
+            self.p = QProcess()  <span class="hljs-comment"># Keep a reference to the QProcess (e.g. on self) while it's running.</span>
+            self.p.readyReadStandardOutput.connect(self.handle_stdout)
+            self.p.readyReadStandardError.connect(self.handle_stderr)
+            self.p.stateChanged.connect(self.handle_state)
+            self.p.finished.connect(self.process_finished)  <span class="hljs-comment">#&nbsp;Clean up once complete.</span>
+            self.p.start(<span class="hljs-string">"python3"</span>, [<span class="hljs-string">'dummy_script.py'</span>])
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">handle_stderr</span>(<span class="hljs-params">self</span>):</span>
+        data = self.p.readAllStandardError()
+        stderr = <span class="hljs-built_in">bytes</span>(data).decode(<span class="hljs-string">"utf8"</span>)
+        <span class="hljs-comment"># Extract progress if it is in the data.</span>
+        progress = simple_percent_parser(stderr)
+        <span class="hljs-keyword">if</span> progress:
+            self.progress.setValue(progress)
+        self.message(stderr)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">handle_stdout</span>(<span class="hljs-params">self</span>):</span>
+        data = self.p.readAllStandardOutput()
+        stdout = <span class="hljs-built_in">bytes</span>(data).decode(<span class="hljs-string">"utf8"</span>)
+        self.message(stdout)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">handle_state</span>(<span class="hljs-params">self, state</span>):</span>
+        states = {
+            QProcess.NotRunning: <span class="hljs-string">'Not running'</span>,
+            QProcess.Starting: <span class="hljs-string">'Starting'</span>,
+            QProcess.Running: <span class="hljs-string">'Running'</span>,
+        }
+        state_name = states[state]
+        self.message(<span class="hljs-string">f"State changed: <span class="hljs-subst">{state_name}</span>"</span>)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">process_finished</span>(<span class="hljs-params">self</span>):</span>
+        self.message(<span class="hljs-string">"Process finished."</span>)
+        self.p = <span class="hljs-literal">None</span>
+
+
+app = QApplication(sys.argv)
+
+w = MainWindow()
+w.show()
+
+app.exec_()
+</code></pre></div> <p>If you run this and start up a process, you'll see the progress bar gradually fill up as the progress messages are received from the <code>dummy_script.py</code> running through <code>QProcess</code>.</p> <p><img alt="The progress bar is filling up." src="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/qprocess-progress.png"> <em>The progress bar fills up as the script completes.</em></p> <p>This approach works well with any command line programs -- in some cases you may want to parse the <em>standard output</em> rather than <em>standard error</em> but the principles are identical. Sometimes programs will not give you a pre-calculated progress value and you'll need to get a little creative. If you like a challenge, try and modify the parser to extract the <em>total time</em> and <em>elapsed time</em> data from the <code>dummy_script.py</code> <em>standard error</em> and use this to calculate a progress bar. You can also try adapting the running for other command line programs.</p> <h3>Further improvements</h3> <p>In all of these examples we store a reference to the process in <code>self.p</code>, meaning we can only run a single process at once. But you are free to run as many processes as you like alongside your application. If you don't need to track information from them, you can simply store references to the processes in a <code>list</code>.</p> <p>If you're running multiple external programs at once and <em>do</em> want to track their states, you may want to consider creating a <em>manager</em> class which does this for you. The <a href="https://www.pythonguis.com/pyqt5-book">PyQt5 book</a> contains more examples, including this manager combining <code>QProcess</code> stdout parsing with <a href="https://www.pythonguis.com/courses/model-views/" class="">model views</a> to create a live progress monitor for external processes.</p> <p><img alt="Process manager" src="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/qprocess-manager.png"> <em>The process manager, showing active processes and progress</em></p></div> <div class="pure-g controls-container"><div role="group" class="pure-button-group pure-u-1-1 center"><!----> <span class="mark-complete pure-button">Mark As Complete <i class="fas fa-magic"></i></span></div> <div class="pure-u-1-1 user-stats-box"><!----> <!----></div></div> <div class="continue-controls"><p class="navigation-continue">
+                Return to <a href="https://www.pythonguis.com/pyqt5/">Create GUI Applications with PyQt5
+                <i class="fas fa-hand-point-right"></i></a></p></div></article></div></div> <div id="container-bottom" class="pure-g"><div class="email-container pure-u-1-1"><div class="email-signup"><h4>Never miss an update</h4> <p>Enjoyed this? Subscribe to get new updates straight in your Inbox.</p> <form action="https://static.mailerlite.com/webforms/submit/t8d2k4" data-code="t8d2k4" method="post" target="_blank" class="ml-block-form"><div class="pure-g"><input aria-label="email" aria-required="true" type="email" data-inputmask="" name="fields[email]" placeholder="Email" autocomplete="email" class="form-control pure-u-2-3"> <button type="submit" class="pure-button button-subscribe pure-u-1-3">Subscribe <i class="fas fa-envelope"></i></button></div> <div class="pure-g email-interest-groups"><input type="hidden" name="groups[]" value="107500789"></div> <input type="hidden" name="ml-submit" value="1"> <input type="hidden" name="anticsrf" value="true"> <p class="smallprint">You can unsubscribe anytime. Just ham, no spam.</p></form></div></div> <div class="article-products"></div> <div class="pure-u-1-1 l-box"><p class="metadata"><strong>Using QProcess to run external programs</strong> was published in <a href="https://www.pythonguis.com/tutorials/">tutorials</a>
+
+        on <time datetime="2020-11-11T22:00:00+00:00">November 11, 2020</time>
+        (updated <time datetime="2022-08-11T09:37:38+00:00">August 11, 2022</time>)
+    </p> <p class="metadata"><a href="https://www.pythonguis.com/topics/process/" class="tag tag-process">process</a> <a href="https://www.pythonguis.com/topics/concurrency/" class="tag tag-concurrency">concurrency</a> <a href="https://www.pythonguis.com/topics/responsive/" class="tag tag-responsive">responsive</a> <a href="https://www.pythonguis.com/topics/gui/" class="tag tag-gui">gui</a> <a href="https://www.pythonguis.com/topics/qt/" class="tag tag-qt">qt</a> <a href="https://www.pythonguis.com/topics/pyqt/" class="tag tag-pyqt">pyqt</a> <a href="https://www.pythonguis.com/topics/pyqt5/" class="tag tag-pyqt5">pyqt5</a> <a href="https://www.pythonguis.com/topics/performance/" class="tag tag-performance">performance</a> <a href="https://www.pythonguis.com/topics/python/" class="tag tag-python">python</a> <a href="https://www.pythonguis.com/topics/qt5/" class="tag tag-qt5">qt5</a> <a href="https://www.pythonguis.com/topics/pyqt5-concurrency/" class="tag tag-pyqt5-concurrency tag-pyqt5 tag-concurrency"><i class="fas fa-running"></i>&nbsp;pyqt5-concurrency</a></p></div></div></div> <footer class="pure-g"><div class="pure-u-1-1 footer-upper"><div class="pure-g"><div class="pure-u-1-1 pure-u-md-1-4"><ul><li><b>Topics</b></li> <li><a href="https://www.pythonguis.com/topics/data-science/">Data Science</a></li> <li><a href="https://www.pythonguis.com/topics/packaging/">Packaging &amp; Distribution</a></li> <li><a href="https://www.pythonguis.com/topics/databases/">Databases &amp; SQL</a></li> <li><a href="https://www.pythonguis.com/topics/qml/">QML/QtQuick</a></li> <li><a href="https://www.pythonguis.com/topics/foundation/">Learn the fundamentals</a></li> <li><a href="https://www.pythonguis.com/topics/getting-started/">Where do I begin?</a></li> <li><a href="https://www.pythonguis.com/topics/raspberry-pi/">Raspberry Pi</a></li> <li><a href="https://www.pythonguis.com/topics/games/">Games</a></li> <li><a href="https://www.pythonguis.com/topics/intermediate/">Start</a></li></ul></div> <div class="pure-u-1-1 pure-u-md-1-4"><ul><li><a href="https://www.pythonguis.com/installation/">Installation</a></li> <li><a href="https://www.pythonguis.com/tutorials/creating-your-first-window/">First steps with PyQt5</a></li> <li><a href="https://www.pythonguis.com/examples/">Example PyQt5 Apps</a></li> <li><a href="https://www.pythonguis.com/widgets/">Widget Library</a></li> <li><a href="https://www.pythonguis.com/docs/">PyQt / PySide documentation</a></li> <li><a href="https://www.pythonguis.com/code/">Reusable code &amp; snippets</a></li> <li><a href="https://www.pythonguis.com/faq/">Frequently Asked Questions</a></li></ul></div> <div class="pure-u-1-1 pure-u-md-1-4"><ul><li class="important"><a href="https://account.pythonguis.com/"><i class="fas fa-download"></i> Your
+            Downloads</a></li> <li><a href="https://www.pythonguis.com/pyqt5-book/">PyQt5 Book</a> / <a href="https://www.pythonguis.com/pyside2-book/">PySide2
+            Book</a></li> <li><a href="https://www.pythonguis.com/pyqt6-book/">PyQt6 Book</a> / <a href="https://www.pythonguis.com/pyside6-book/">PySide6
+          Book</a></li> <li><a href="https://www.pythonguis.com/packaging-book/">Python Packaging Book</a></li> <li><a href="https://www.pythonguis.com/books/downloads/"><i class="fas fa-code"></i> Book Source Code</a></li> <li><a href="https://www.pythonguis.com/pyqt5-tutorial/">PyQt5 tutorial</a></li> <li><a href="https://www.pythonguis.com/pyqt6-tutorial/">PyQt6 tutorial</a></li> <li><a href="https://www.pythonguis.com/pyside2-tutorial/">PySide2 tutorial</a></li> <li><a href="https://www.pythonguis.com/pyside6-tutorial/">PySide6 tutorial</a></li> <li><a href="https://www.pythonguis.com/blog/">Latest articles</a></li></ul></div> <div class="pure-u-1-1 pure-u-md-1-4"><ul><li><a href="https://www.pythonguis.com/about/">About</a></li> <li><a href="https://www.pythonguis.com/hire/">Hire me</a></li> <li><a href="https://www.pythonguis.com/live/">1-on-1 mentoring</a></li> <li><a href="https://www.pythonguis.com/write/">Write with me</a></li> <li><a href="https://mfitzp.getrewardful.com/signup">Become an affiliate</a></li> <li><a href="https://www.pythonguis.com/contact/">Contact me</a></li> <li><a href="https://www.pythonguis.com/legal/">Licensing, Privacy &amp; Legal</a></li></ul></div></div></div> <div class="pure-u-1-1 footer-final"><div class="pure-u-1-1 social-links"><p class="social-links-notice">Follow us for new tutorials</p> <div class="subscribe-social-links"><a href="https://twitter.com/pythonguis" class="twitter"><i class="fab fa-twitter"></i></a> <a href="https://github.com/pythonguis" class="github"><i class="fab fa-github-alt"></i></a> <a href="https://www.facebook.com/pythonguis" class="facebook"><i class="fab fa-facebook"></i></a> <a href="https://www.youtube.com/channel/UCMW4KwSlygaDef0tgqPjbRQ" class="youtube"><i class="fab fa-youtube"></i></a> <a href="https://www.linkedin.com/company/pythonguis/" class="linkedin"><i class="fab fa-linkedin"></i></a></div></div> <p><a href="https://www.pythonguis.com/">Python GUIs</a>
+      Copyright ©2014-2022
+      <a href="https://www.mfitzp.com/"> Martin Fitzpatrick</a></p> <p>
+      Tutorials CC-BY-NC-SA
+      <i class="fab fa-creative-commons"></i> <i class="fab fa-creative-commons-by"></i> <i class="fab fa-creative-commons-nc"></i> <i class="fab fa-creative-commons-sa"></i>
+      &nbsp;
+      <a href="https://www.pythonguis.com/sitemap/">Sitemap</a>
+      &nbsp;
+      Public code <a href="https://opensource.org/licenses/BSD-2-Clause" rel="nofollow">BSD</a> &amp; <a href="https://opensource.org/licenses/MIT" rel="nofollow">MIT</a></p></div></footer></div></div>
+
+    <script type="text/javascript" src="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/vue.min.js.download"></script>
+    <script type="text/javascript" src="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/vue2-filters.min.js.download"></script>
+    <script type="text/javascript" src="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/vue-observe-visibility.min.js.download"></script>
+        <script type="text/javascript" src="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/axios.min.js.download"></script>
+
+    <script type="text/javascript">
+
+var localizedDiscount = {'WE5GY0': 50, 'DQ3JY5': 35};
+
+var vm = new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#app',
+  data: {
+    user: {
+        completed: [],
+        library: 'all',
+        streak: 4,
+        lastCompletedDate: false
+    },
+    staticurl: 'https://www.pythonguis.com/',
+    siteurl: 'https://www.pythonguis.com/',
+    apiurl: 'https://api.pythonguis.com',
+    hidden: ['installation'],
+    landed: document.referrer != 'https://www.pythonguis.com/',
+    defaultLibrary: 'all', // the default library to prefer content for
+    // video
+    video: '',
+    is_video_loaded: false,
+    countryCode: '',
+    countryRegion: '',
+    activeDiscount: false,
+    couponCode: '',
+    localizedPrices: true,
+    comments: false,
+    curriculum: [],
+    current_page_id: null,
+    gumroadAffiliateId: false,
+    query: '',
+    searchResults: [],
+    showMenu: false
+  },
+  methods: {
+    init: function() {
+        this.load_user_data();
+        this.validate_streak();
+    },
+    toggle_menu: function() {
+        this.showMenu = !this.showMenu;
+    },
+    discount_active: function () {
+        return (this.localizedPrices || this.activeDiscount)
+    },
+    discounted_price: function (price) {
+        var pc = false;
+        if (this.localizedPrices) {
+            pc = localizedDiscount[this.couponCode]
+        } else if (this.activeDiscount) {
+            pc = this.activeDiscount.discount;
+        }
+
+        if (pc != false) {
+            pc = (100 - pc) / 100;
+            return Math.ceil(price * pc)
+        }
+
+        return price
+    },
+    load_user_data: function() {
+        var userdata = localStorage.getItem('user');
+        if (userdata) {
+            Object.assign(this.user, JSON.parse(userdata));
+        }
+        if (this.user.library == undefined) { this.user.library = this.defaultLibrary; }
+    },
+    maybe_play_video: function() {
+        if (this.video && !this.is_video_loaded) {
+            this.play_video();
+        }
+    },
+    get_gumroad_product_url: function(url, qs) {
+        window.setTimeout(function (){ GumroadOverlay.resetLinks() }, 1000);
+
+        if (this.couponCode) {
+            qs = '?' + qs; // '?offer_code=' + this.couponCode + '&' + qs
+        } else {
+            qs = '?' + qs;
+        }
+
+        if (this.gumroadAffiliateId) {
+            return url + qs + '&affiliate_id=' + this.gumroadAffiliateId;
+        } else {
+            return url + qs;
+        }
+
+    },
+    localize: function() {
+        console.log("Localize.");
+        var localdata = localStorage.getItem('localization');
+
+        if (!localdata || localdata == 'undefined') {
+            // Will callback on complete of API request.
+            return this.get_localization()
+        }
+
+        localdata = JSON.parse(localdata)
+        this.countryCode = localdata.iso_code;
+        this.countryRegion = localdata.region;
+        // Don't localize, if site-wide is bigger.
+        if (this.activeDiscount && (localizedDiscount[localdata.discount] <= this.activeDiscount.discount)) {
+            console.log("Active discount in effect.");
+            this.localizedPrices = false;
+            return false;
+        }
+        console.log("Prices localized.");
+        this.couponCode = localdata.discount;
+        this.localizedPrices = true;
+
+
+    },
+    get_localization: function() {
+        var self = this;
+        console.log("Localization API request.");
+        axios
+            .get(self.apiurl + '/api/v1/localize/')
+            .then(function (response){
+                if (response.data.success){
+                    localStorage.setItem('localization', JSON.stringify(response.data.localization));
+                    self.localize();
+                }
+
+            })
+    },
+    play_video: function() {
+        var url = (this.video.includes('https://') ? this.video:'https://vimeo.com/' + this.video),
+            options = {
+                url: url,
+                responsive: true,
+                dnt: true,
+            };
+        var player = new Vimeo.Player('player', options);
+        this.is_video_loaded = true;
+    },
+    is_hidden: function(id) {
+        return this.hidden.includes(id);
+    },
+    unhide: function(id) {
+        var index = this.hidden.indexOf(id);
+        if (index !== -1){
+            this.hidden.splice(index, 1);
+        }
+    },
+    toggle_tutorial_complete: function (id) {
+        var completed = this.user.completed;
+
+        if (completed.includes(id)){
+            var index = this.user.completed.indexOf(id);
+            if (index !== -1){
+                this.user.completed.splice(index, 1);
+            }
+
+        } else {
+            // Add this tutorial to the list.
+            this.user.completed.push(id);
+            this.update_streak();
+            plausible('completed');
+        }
+        //$set(this.user.completed, completed);
+        this.save_user();
+    },
+    update_streak: function () {
+        var dt = new Date(),
+            thresholdDt = new Date();
+        thresholdDt.setHours(0,0,0,0);
+        thresholdDt.setDate(thresholdDt.getDate() - 1);
+        if (this.user.lastCompletedDate == false || this.user.lastCompletedDate < thresholdDt) {
+            this.user.lastCompletedDate = dt;
+            this.user.streak = 0;
+        } else {
+            var lastCompletedDt = new Date(this.user.lastCompletedDate);
+            lastCompletedDt.setHours(0,0,0,0);
+            if (lastCompletedDt.getTime() == thresholdDt.getTime()) {
+                this.user.lastCompletedDate = dt;
+                this.user.streak += 1;
+                plausible('streak');
+            }
+        }
+    },
+    validate_streak: function () {
+        // Check on login that last complete < 1 day ago.
+        // nb. not 24 hrs.
+        var thresholdDt = new Date();
+        thresholdDt.setHours(0,0,0,0);
+        thresholdDt.setDate(thresholdDt.getDate() - 1);
+        console.log(thresholdDt);
+        if (this.user.lastCompletedDate == false || this.user.lastCompletedDate < thresholdDt) {
+            this.user.streak = 0;
+            this.save_user();
+        }
+    },
+    set_library: function (library) {
+        this.user.library = library;
+        this.save_user();
+    },
+    library_is: function (library) {
+        return library == this.user.library
+    },
+    library_is_or_all: function (library) {
+        return this.library_is(library) || this.user.library == 'all';
+    },
+    save_user: function () {
+        localStorage.setItem('user', JSON.stringify(this.user));
+    },
+    switch_tab: function(e) {
+        var clickedtab = e.target,
+            tabid = clickedtab.getAttribute('data-tab');
+
+        // Update tab display.
+        siblings = clickedtab.parentNode.querySelectorAll('li');
+        [].forEach.call(siblings, function(el) {
+            el.classList.remove("current");
+        });
+
+        clickedtab.classList.add("current");
+
+        // Change the active code block.
+        codecontainer = clickedtab.parentNode.parentNode;
+        codeblocks = codecontainer.querySelectorAll('.tab-content');
+        [].forEach.call(codeblocks, function(el) {
+            el.classList.remove("current");
+            if (el.id == tabid){el.classList.add('current');}
+        });
+    },
+
+  }
+});
+
+Vue.set(vm, 'current_page_id', 'qprocess-external-programs');
+vm.init();
+vm.localize();
+
+function playVideo (isVisible, entry) {
+    var video = entry.target;
+    if (isVisible){
+        video.play();
+    } else if (video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2) {
+        video.pause();
+    }
+}
+
+
+function celebrate (event) {
+    confetti({
+        colors: ['#1A936F', '#C0D9E5', '#FFBA08', '#006494'],
+        origin: {
+          x: event.clientX / window.innerWidth,
+          y: event.clientY / window.innerHeight
+        }
+      });
+}
+
+
+
+    </script>
+
+
+
+<script type="text/javascript">
+
+</script>
+
+
+    <script defer="" src="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/2.0.0" type="module" integrity="sha384-D7B5eODAUd397+f4zNFAVlnDNDtO1ppV8rPnfygILQXhqu3cUndgHvlcJR2Bhig8"></script>
+
+    <script src="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/highlight.min.js.download"></script>
+    <script>
+        window.addEventListener('load', function () {
+            hljs.highlightAll();
+        });
+    </script>
+    <script src="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/confetti.browser.min.js.download"></script>
+<script src="./Run external programs in PyQt5 with QProcess, with streams and progress bars_files/paddle.js.download"></script>
+<script type="text/javascript">
+    Paddle.Setup({ vendor: 16090 });
+</script>
+
+
+</body></html>

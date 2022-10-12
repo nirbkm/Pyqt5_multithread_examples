@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<!-- saved from url=(0082)https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+
+
+    <title>
+            Multithreading PyQt5 applications with QThreadPool
+
+    </title>
+
+    
+    <meta name="referrer" content="origin">
+    <meta http-equiv="content-language" content="en-us">
+
+<meta property="og:title" content="Multithreading PyQt5 applications with QThreadPool">
+<meta name="twitter:title" content="Multithreading PyQt5 applications with QThreadPool">
+<meta property="og:url" content="https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/">
+<meta name="twitter:url" content="https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/">
+
+
+
+<meta name="description" content="Run background tasks concurrently without impacting your UI. A common problem when building Python GUI applications is " locking="" up"="" of="" the="" interface="" when="" attempting="" to="" perform="" long-running="" background="" tasks."="">
+<meta property="og:description" content="Run background tasks concurrently without impacting your UI. A common problem when building Python GUI applications is " locking="" up"="" of="" the="" interface="" when="" attempting="" to="" perform="" long-running="" background="" tasks."="">
+<meta name="twitter:description" content="Run background tasks concurrently without impacting your UI. A common problem when building Python GUI applications is " locking="" up"="" of="" the="" interface="" when="" attempting="" to="" perform="" long-running="" background="" tasks."="">
+
+
+
+
+<link href="https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/" rel="canonical">
+
+<meta property="og:site_name" content="Python GUIs">
+
+<meta itemprop="datePublished" content="2017-04-15">
+<meta property="article:published_time" content="2017-04-15T12:04:00+00:00">
+
+<meta itemprop="dateModified" content="2022-08-11">
+<meta property="article:modified_time" content="2022-08-11T09:37:38+00:00">
+
+
+<meta property="article:tag" content="multithreading">
+<meta property="article:tag" content="responsive">
+<meta property="article:tag" content="gui">
+<meta property="article:tag" content="threading">
+<meta property="article:tag" content="qt">
+<meta property="article:tag" content="pyqt">
+<meta property="article:tag" content="pyqt5">
+<meta property="article:tag" content="concurrency">
+<meta property="article:tag" content="performance">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="qt5">
+<meta property="article:tag" content="pyqt5-concurrency">
+
+<meta property="keywords" content="multithreading,responsive,gui,threading,qt,pyqt,pyqt5,concurrency,performance,python,qt5,pyqt5-concurrency">
+
+
+
+<meta property="og:type" content="article">
+
+
+<meta property="og:image" content="https://www.pythonguis.com/images/courses/qt/concurrent.png">
+<meta name="twitter:image:src" content="https://www.pythonguis.com/images/courses/qt/concurrent.png">
+<meta name="twitter:card" content="summary_large_image">
+
+
+<script type="application/ld+json">
+    {
+    "@context": "http://schema.org",
+    "@type": "TechArticle",
+    "headline": "Multithreading PyQt5 applications with QThreadPool",
+    "image": "https://www.pythonguis.com/images/courses/qt/concurrent.png",
+    "keywords": "multithreading,responsive,gui,threading,qt,pyqt,pyqt5,concurrency,performance,python,qt5,pyqt5-concurrency",
+    "url": "https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/",
+    "author": {
+        "@type": "Person",
+        "name": "Martin Fitzpatrick",
+        "url": "https://www.mfitzp.com"
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "Python GUIs",
+        "url": "https://www.pythonguis.com",
+        "logo": {
+            "@type": "Imageobj",
+            "url": "https://www.pythonguis.com/theme/images/logo-card.png",
+            "name": "Python GUIs Logo"
+        }
+    },
+    "datePublished": "2017-04-15 12:04:00+00:00",
+    "dateModified": "2022-08-11 09:37:38+00:00"
+    }
+    </script>
+
+
+<script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement":
+        [
+        {
+        "@type": "ListItem",
+        "position": 0,
+        "item":
+        {
+          "@id": "https://www.pythonguis.com/tutorials/",
+          "name": "tutorials"
+          }
+      },
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "item":
+          {
+            "@id": "https://www.pythonguis.com/pyqt5-tutorial/#concurrent-execution",            "name": "Threads & Processes"
+          }
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "item":
+          {
+            "@id": "https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/",
+            "name": "Multithreading PyQt5 applications with QThreadPool"
+            }
+        }
+        ]
+      }
+      </script>
+
+
+<link rel="author" href="https://www.pythonguis.com/">
+<link rel="publisher" href="https://www.pythonguis.com/"><meta name="flattr:id" content="gwy91w">
+<meta name="google-site-verification" content="Ogw6ZN_S7dzUc9huqkiLOeI_BH8F__4Ft8pNXQVU1Cw">
+<meta name="google-site-verification" content="tnbPDWRORDk2SjXzRhyh5HOarf2hDojT07FQS2zcMUY">
+<meta name="google-site-verification" content="2DFeXMiIAIVr20q8LLteYxffew35Pp89MXa7Hyy0_IM">
+<meta name="google-site-verification" content="aDPLnwleWQc6nHK2vIMKXY5kUBDHFUPNJ75QcdcdEss">
+<meta name="msvalidate.01" content="79DE55785B481065302BA20C0A64D33F">
+
+
+<!-- http://t.co/dKP3o1e -->
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="cleartype" content="on">
+
+<link rel="shortcut icon" href="https://www.pythonguis.com/favicon.ico">
+<link rel="apple-touch-icon" href="https://www.pythonguis.com/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.gstatic.com/">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com/">
+<link rel="preconnect" href="https://ik.imagekit.io/">
+
+<!-- CSS, will be bundled -->
+<link rel="stylesheet" href="./Multithreading PyQt5 applications with QThreadPool_files/pure-min.css" type="text/css">
+<link rel="stylesheet" href="./Multithreading PyQt5 applications with QThreadPool_files/grids-responsive-min.css" type="text/css">
+<link rel="stylesheet" href="./Multithreading PyQt5 applications with QThreadPool_files/main.css" type="text/css">
+
+<!-- Font preload -->
+<link rel="preload" as="style" href="./Multithreading PyQt5 applications with QThreadPool_files/css2">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,700;1,400;1,700&amp;display=swap">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&amp;display=swap">
+<link rel="preload" as="style" href="./Multithreading PyQt5 applications with QThreadPool_files/css2(2)">
+
+<link rel="preload" as="style" href="./Multithreading PyQt5 applications with QThreadPool_files/all.min.css">
+
+<!-- Font actual load, onload swap -->
+<link rel="stylesheet" href="./Multithreading PyQt5 applications with QThreadPool_files/css2" media="all" onload="this.media=&#39;all&#39;">
+<link rel="stylesheet" href="./Multithreading PyQt5 applications with QThreadPool_files/css2(1)" media="all" onload="this.media=&#39;all&#39;">
+<link rel="stylesheet" href="./Multithreading PyQt5 applications with QThreadPool_files/css2(2)" media="all" onload="this.media=&#39;all&#39;">
+
+<link rel="stylesheet" href="./Multithreading PyQt5 applications with QThreadPool_files/all.min.css" media="all" onload="this.media=&#39;all&#39;">
+
+<!-- Apple touch icons -->
+<link rel="apple-touch-icon" href="https://www.pythonguis.com/apple-touch-icon.png">
+<link rel="apple-touch-icon-precomposed" href="https://www.pythonguis.com/apple-touch-icon-precomposed.png">
+
+<!-- <link rel="manifest" href="/manifest.json" /> -->
+
+<link href="https://www.pythonguis.com/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="Python GUIs Full Atom Feed">
+<link href="https://www.pythonguis.com/feeds/atom.xml" type="application/atom+xml" rel="alternate" title="Python GUIs Atom Feed">
+<link href="https://www.pythonguis.com/feeds/rss.xml" type="application/rss+xml" rel="alternate" title="Python GUIs RSS Feed">
+<link href="https://www.pythonguis.com/feeds/tutorials.atom.xml" type="application/atom+xml" rel="alternate" title="Python GUIs tutorials Atom Feed">
+<link href="https://www.pythonguis.com/feeds/tutorials.rss.xml" type="application/rss+xml" rel="alternate" title="Python GUIs tutorials RSS Feed">
+
+
+<!--    <script src="https://cdn.podia.com/embeds.js" async="async"></script> -->
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script defer="" data-domain="pythonguis.com" src="./Multithreading PyQt5 applications with QThreadPool_files/plausible.js.download"></script>
+<script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
+
+<!-- MailerLite Universal
+<script>
+  (function (m, a, i, l, e, r) {
+    m['MailerLiteObject'] = e; function f() {
+      var c = { a: arguments, q: [] }; var r = this.push(c); return "number" != typeof r ? r : f.bind(c.q);
+    }
+    f.q = f.q || []; m[e] = m[e] || f.bind(f.q); m[e].q = m[e].q || f.q; r = a.createElement(i);
+    var _ = a.getElementsByTagName(i)[0]; r.async = 1; r.src = l + '?v' + (~~(new Date().getTime() / 1000000));
+    _.parentNode.insertBefore(r, _);
+  })(window, document, 'script', 'https://static.mailerlite.com/js/universal.js', 'ml');
+
+  var ml_account = ml('accounts', '1083120', 'o8o0o8k0r4', 'load');
+</script>
+<script>
+  var ml_webform_793852 = ml_account('webforms', '793852', 'e6q5x4', 'load');
+  ml_webform_793852('animation', 'fadeIn');
+</script>
+End MailerLite Subscribe -->
+
+<script>(function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}})(window,'rewardful');</script>
+<script async="" src="./Multithreading PyQt5 applications with QThreadPool_files/rw.js.download" data-rewardful="c7bf74"></script>
+    <style>
+html{-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}body{margin:0;font-family:"Montserrat",sans-serif}[v-cloak]{display:none !important}.logo-small{width:222px;height:32px}.navigation-collapsed,.menu-item-collapsed{display:none !important}.navigation-expanded,.menu-item-expanded{display:inline-block}@media screen and (max-width:1200px){.navigation-collapsed,.menu-item-collapsed{display:inline-block !important}.menu-item-collapsed{display:block !important}.navigation-expanded,.menu-item-expanded,.expanded{display:none !important}}#welcome{background-color:#ffd141;text-align:center;padding:.5rem 1rem;margin:0}#welcome p,#welcome a{color:#0d1f2d;font-size:.9rem;margin:0}body.wide-top #container-top{max-width:1110px}body.wide #container{max-width:1110px}body.wide-bottom #container-bottom{max-width:1110px}body.full-top #container-top{max-width:100%}body.full #container{max-width:100%}body.full-bottom #container-bottom{max-width:100%}body.article #container,body.page #container,.header-center,.article-header-center,.category-header-center,.tag-header-center{margin:0 auto}    </style>
+
+
+
+<link rel="stylesheet" type="text/css" href="./Multithreading PyQt5 applications with QThreadPool_files/animate.css" media="all"><link rel="stylesheet" type="text/css" href="./Multithreading PyQt5 applications with QThreadPool_files/paddle.css" media="all"><link rel="prefetch"><script style="display: none;">var tvt = tvt || {}; tvt.captureVariables = function(a){for(var b=
+new Date,c={},d=Object.keys(a||{}),e=0,f;f=d[e];e++)if(a.hasOwnProperty(f)&&"undefined"!=typeof a[f])try{var g=[];c[f]=JSON.stringify(a[f],function(h,k){try{if("function"!==typeof k){if("object"===typeof k&&null!==k){if(k instanceof HTMLElement||k instanceof Node||-1!=g.indexOf(k))return;g.push(k)}return k}}catch(m){}})}catch(h){}a=document.createEvent("CustomEvent");a.initCustomEvent("TvtRetrievedVariablesEvent",!0,!0,{variables:c,date:b});window.dispatchEvent(a)};window.setTimeout(function() {tvt.captureVariables({'dataLayer.hide': (function(a){a=a.split(".");for(var b=window,c=0;c<a.length&&(b=b[a[c]],b);c++);return b})('dataLayer.hide'),'gaData': window['gaData'],'dataLayer': window['dataLayer']})}, 2000);</script></head>
+
+<body class="article  tagged-multithreading  tagged-responsive  tagged-gui  tagged-threading  tagged-qt  tagged-pyqt  tagged-pyqt5  tagged-concurrency  tagged-performance  tagged-python  tagged-qt5  tagged-pyqt5-concurrency  academy " data-instant-intensity="mousedown">
+    <div id="app"><div id="layout" class=""><a href="https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/#menu" id="menuLink" class="menu-link"><span></span></a> <div id="menu"><div class="pure-menu"><ul class="pure-menu-list"><li class="pure-menu-item menu-item-divided">Python GUIs</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/latest/" class="pure-menu-link">Latest</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/faq/" class="pure-menu-link">FAQ</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/pyqt5/" class="pure-menu-link">PyQt5 <i class="fas fa-circle library-marker-pyqt5"></i></a></li> <li class="pure-menu-item menu-item-divided">Basics</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/creating-your-first-pyqt-window/" class="pure-menu-link">Create a PyQt5 app</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/pyqt-signals-slots-events/" class="pure-menu-link">PyQt5 Signals</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/pyqt-basic-widgets/" class="pure-menu-link">PyQt5 Widgets</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/pyqt-layouts/" class="pure-menu-link">PyQt5 Layouts</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/pyqt-actions-toolbars-menus/" class="pure-menu-link">PyQt5 Menus</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/pyqt-dialogs/" class="pure-menu-link">PyQt5 Dialogs</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/creating-multiple-windows/" class="pure-menu-link">Multi-window PyQt5</a></li> <li class="pure-menu-item menu-item-divided">Qt Designer</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/first-steps-qt-creator/" class="pure-menu-link">First Qt Designer app</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/qt-designer-gui-layout/" class="pure-menu-link">Qt Designer Layouts</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/creating-dialogs-qt-designer/" class="pure-menu-link">Dialogs in Qt Designer</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/qresource-system/" class="pure-menu-link">The QResource System</a></li> <li class="pure-menu-item menu-item-divided">Concurrency</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/" class="pure-menu-link">Long-running tasks</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/qprocess-external-programs/" class="pure-menu-link">External processes</a></li> <li class="pure-menu-item menu-item-divided">Model Views</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/modelview-architecture/" class="pure-menu-link">Model Views</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/qtableview-modelviews-numpy-pandas/" class="pure-menu-link">Pandas &amp; Numpy Views</a></li> <li class="pure-menu-item menu-item-divided">Plotting</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/plotting-pyqtgraph/" class="pure-menu-link">Plotting with PyQtGraph</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/plotting-matplotlib/" class="pure-menu-link">Plotting with Matplotlib</a></li> <li class="pure-menu-item menu-item-divided">QGraphics</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/pyqt-qgraphics-vector-graphics/" class="pure-menu-link">Vector Graphics</a></li> <li class="pure-menu-item menu-item-divided">Custom Widgets</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/bitmap-graphics/" class="pure-menu-link">Bitmap Graphics</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/creating-your-own-custom-widgets/" class="pure-menu-link">Custom Widgets</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/qpropertyanimation/" class="pure-menu-link">Animating Widgets</a></li> <li class="pure-menu-item menu-item-divided">Further</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/transmitting-extra-data-qt-signals/" class="pure-menu-link">Modifying Signals</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/system-tray-mac-menu-bar-applications-pyqt/" class="pure-menu-link">Taskbar apps</a></li> <li class="pure-menu-item menu-item-divided">Packaging</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/packaging-pyqt5-pyside2-applications-windows-pyinstaller/" class="pure-menu-link">Packaging for Windows</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/packaging-pyqt5-applications-pyinstaller-macos-dmg/" class="pure-menu-link">Packaging for macOS</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/packaging-pyqt5-applications-linux-pyinstaller/" class="pure-menu-link">Packaging for Linux</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/packaging-data-files-pyqt5-with-qresource-system/" class="pure-menu-link">Packaging QResources</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tutorials/packaging-pyqt5-apps-fbs/" class="pure-menu-link">Packaging with fbs</a></li> <li class="pure-menu-item menu-item-divided">Resources</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/books/" class="pure-menu-link">Books</a></li> <li class="pure-menu-item menu-item-divided">Services</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/hire/" class="pure-menu-link">Consulting</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/contact/" class="pure-menu-link">Contact</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/about/" class="pure-menu-link">About</a></li> <li class="pure-menu-item menu-item-divided">Libraries</li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/pyqt6/" class="pure-menu-link">PyQt6</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/pyside6/" class="pure-menu-link">PySide6</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/tkinter/" class="pure-menu-link">Tkinter</a></li> <li class="pure-menu-item"><a href="https://www.pythonguis.com/pyside2/" class="pure-menu-link">PySide2</a></li></ul></div></div> <div id="navigation" class="pure-g"><div class="pure-u-1-1"><div class="navigation-bar pure-menu pure-menu-horizontal menu-right library-selector"><ul class="pure-menu-list"><li id="searchnav" class="pure-menu-item"><form action="https://www.pythonguis.com/search" method="get"><label hidden="hidden" for="search-input">Search Python GUIs</label> <input type="text" name="q" placeholder="Search Python GUIs"> <input type="submit" value="Search"></form></li></ul></div></div></div> <div id="navigation-middle"><a href="https://www.pythonguis.com/pyqt5/" title="Python GUIs" class="logo pure-img"></a></div> <div id="searchtop"><form action="https://www.pythonguis.com/search" method="get"><label hidden="hidden" for="search-input">Search Python GUIs</label> <input type="text" name="q" placeholder="Search Python GUIs"> <input type="submit" value="Search"></form></div> <a name="top"></a> <div id="main"><div id="container-top" class="pure-g"><div id="content-upper" class="pure-u-1-1 l-box content-spacer"><div id="breadcrumbs" class="pure-u-1-1"><ol><li><a href="https://www.pythonguis.com/pyqt5-tutorial/"><i class="fas fa-book"></i>
+        PyQt5 Tutorial
+      </a>/
+    </li> <li><a href="https://www.pythonguis.com/pyqt5-tutorial/#concurrent-execution">
+        Threads &amp; Processes
+      </a></li></ol></div> <div class="pure-u-1-1 article-header"><div class="article-header-center"><h1><span>Multithreading PyQt5 applications with QThreadPool<br><small> Run background tasks concurrently without impacting your UI</small></span></h1></div></div></div></div> <div id="container" class="pure-g"><div class="pure-u-1-1 l-box"><div class="byline"><span class="byline-part">
+    by <a href="https://www.pythonguis.com/authors/martin-fitzpatrick/">Martin Fitzpatrick</a></span> <span class="byline-part"><i class="fas fa-calendar"></i>
+  Last updated <time datetime="2022-08-11 09:37:38+00:00">11 August 2022</time></span> <span class="byline-part"><span class="library-indicator library-indicator-pyqt">PyQt5</span></span> <span class="byline-part"><i class="fas fa-folder"></i> <a href="https://www.pythonguis.com/pyqt5-tutorial/#concurrent-execution">
+      Threads &amp; Processes
+    </a></span></div> <div class="article-curriculum"><h4><a href="https://www.pythonguis.com/pyqt5-tutorial/"><i class="fas fa-book"></i>
+      PyQt5 Tutorial
+    </a>
+    —
+    <a href="https://www.pythonguis.com/pyqt5-tutorial/#concurrent-execution">Threads &amp; Processes</a></h4> <ul class="course-lessons fa-ul"><li class="lesson-row"><span class="fa-li"><i class="fas fa-hand-point-right"></i></span> <a href="https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/">Multithreading PyQt5 applications with QThreadPool</a></li> <li class="lesson-row"><span class="fa-li"><i class="far fa-circle"></i></span> <a href="https://www.pythonguis.com/tutorials/qprocess-external-programs/">Using QProcess to run external programs</a></li></ul></div> <p class="crosslinks">
+    This tutorial is also available for
+    <a href="https://www.pythonguis.com/tutorials/multithreading-pyside6-applications-qthreadpool/">PySide6</a>
+,     <a href="https://www.pythonguis.com/tutorials/multithreading-pyqt6-applications-qthreadpool/">PyQt6</a>
+ and     <a href="https://www.pythonguis.com/tutorials/multithreading-pyside-applications-qthreadpool/">PySide2</a></p> <!----> <article class="post"><a name="top"></a> <div id="article-main-body" class="article-wrap article-main-body"><p>A common problem when building Python GUI applications is "locking up" of the interface when attempting to perform long-running background tasks. In this tutorial I'll cover one of the simplest ways to achieve concurrent execution in PyQt5.</p> <p class="admonition admonition-note"><span class="admonition-kind"><i class="fas fa-pencil-alt"></i></span>  If you're looking to run external <em>programs</em> (such as command line utilities) from your applications, check out <a href="https://www.pythonguis.com/qprocess-external-programs" class="">the QProcess tutorial</a>.</p> <h2 id="background">Background</h2> <p>Applications based on Qt (like most GUI applications) are <em>event based</em>. This means that execution is driven in response to user interaction, signals and timers. In an event-driven application, clicking on a button creates an <em>event</em> which your application subsequently <em>handles</em> to produce some expected output. Events are pushed onto and taken off an event queue and processed sequentially.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs">app = QApplication([])
+window = MainWindow()
+app.exec_()
+</code></pre></div> <p>The event loop is started by calling <code>.exec_()</code> on your <code>QApplication</code> object and runs within the same thread as your Python code. The thread which runs this event loop —&nbsp;commonly  referred to as the <em>GUI thread</em> — also handles all window communication with the host operating system.</p> <p>By default, any execution triggered by the event loop will also run synchronously within this thread. In practise this means that any time your PyQt application spends <em>doing something</em> in your code, window communication and GUI interaction are frozen.</p> <p>If what you're doing is simple, and returns control to the GUI loop quickly, this freeze will be imperceptible to the user. However, if you need to perform longer-running tasks, for example opening/writing a large file, downloading some data, or rendering some complex image, there are going to be problems. To your user the application will appear to be unresponsive (because it is). Because your app is no longer communicating with the OS, on MacOS X if you click on your app you will see the spinning wheel of death. And, <em>nobody</em> wants that.</p> <p>The solution is simple: get your work out of the <em>GUI thread</em> (and into another thread). PyQt (via Qt) provides an straightforward interface to do exactly that.</p> <h2 id="preparation">Preparation</h2> <p class="admonition admonition-note"><span class="admonition-kind"><i class="fas fa-pencil-alt"></i></span>  The following code will work with both Python 2.7 and Python 3.</p> <p>To demonstrate multi-threaded execution we need an application to work with. Below is a minimal stub application for PyQt which will allow us to demonstrate multithreading, and see the outcome in action. Simply copy and paste this into a new file, and save it with an  appropriate filename like <code>multithread.py</code>. The remainder of the code will be added to this file (there is also a complete working example at the bottom if you're impatient).</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs"><span class="hljs-keyword">from</span> PyQt5.QtGui <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">from</span> PyQt5.QtWidgets <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">from</span> PyQt5.QtCore <span class="hljs-keyword">import</span> *
+
+<span class="hljs-keyword">import</span> time
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MainWindow</span>(<span class="hljs-params">QMainWindow</span>):</span>
+
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, *args, **kwargs</span>):</span>
+        <span class="hljs-built_in">super</span>(MainWindow, self).__init__(*args, **kwargs)
+
+        self.counter = <span class="hljs-number">0</span>
+
+        layout = QVBoxLayout()
+
+        self.l = QLabel(<span class="hljs-string">"Start"</span>)
+        b = QPushButton(<span class="hljs-string">"DANGER!"</span>)
+        b.pressed.connect(self.oh_no)
+
+        layout.addWidget(self.l)
+        layout.addWidget(b)
+
+        w = QWidget()
+        w.setLayout(layout)
+
+        self.setCentralWidget(w)
+
+        self.show()
+
+        self.timer = QTimer()
+        self.timer.setInterval(<span class="hljs-number">1000</span>)
+        self.timer.timeout.connect(self.recurring_timer)
+        self.timer.start()
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">oh_no</span>(<span class="hljs-params">self</span>):</span>
+        time.sleep(<span class="hljs-number">5</span>)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">recurring_timer</span>(<span class="hljs-params">self</span>):</span>
+        self.counter +=<span class="hljs-number">1</span>
+        self.l.setText(<span class="hljs-string">"Counter: %d"</span> % self.counter)
+
+
+app = QApplication([])
+window = MainWindow()
+app.exec_()
+</code></pre></div> <p>Run the file as for any other Python/PyQt application:</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs">python3 multithread.py
+</code></pre></div> <p>You should see a demonstration window with a number counting upwards. This a generated by a simple recurring time, firing once per second. Think of this as our <em>event loop indicator</em>, a simple way to let us known that out application is ticking over normally. There is also a button with the word <strong>"DANGER!"</strong>. Push it.</p> <p><video height="500" loading="lazy" loop="loop" muted="muted" playsinline="" preload="none" width="700"><source src="https://i.imgur.com/V87xUAo.mp4" type="video/mp4"> <source src="https://i.imgur.com/V87xUAo.webm" type="video/webm"></video></p> <p>You'll notice that each time you push the button the counter stops ticking and your application freezes entirely. On Windows you may see the window turn pale, indicating it is not responding, while on a Mac you'll get the spinning wheel of death.</p> <h2 id="the-dumb-approach">The dumb approach</h2> <p class="admonition admonition-warning"><span class="admonition-kind"><i class="fas fa-exclamation-circle"></i></span>  Don't do this. Ever.</p> <p>What appears as a <em>frozen</em> interface is the main Qt event loop being blocked from processing (and responding to) window events. Your clicks on the window as still registered by the host OS and sent to your application, but because it's sat in your big ol' lump of code (<code>time.sleep</code>), it can't accept or react to them. They have to wait until your code passes
+control back to Qt.</p> <p>The simplest, and perhaps most logical, way to get around this is to accept events from within your code. This allows Qt to continue to respond to the host OS and your application
+will stay responsive. You can do this easily by using the static <code>.processEvents()</code> function on the <code>QApplication</code> class. Simply add a line like the following, somewhere in your
+long-running code block:</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs">QApplication.processEvents()
+</code></pre></div> <p>For example <em>long running</em> code <code>time.sleep</code> we could break that down into 5x 1-second sleeps and
+insert the <code>.processEvents</code> in between. The code for this would be:</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">oh_no</span>(<span class="hljs-params">self</span>):</span>
+    <span class="hljs-keyword">for</span> n <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">5</span>):
+        QApplication.processEvents()
+        time.sleep(<span class="hljs-number">1</span>)
+</code></pre></div> <p>Now when you push the button your code is entered as before. However, now <code>QApplication.processEvents()</code>
+intermittently passes control back to Qt, and allows it to respond to events as normal. Qt will then accept
+events <em>and handle them</em> before returning to run the remainder of your code.</p> <p>This works, but it's horrible for a couple of reasons.</p> <p>Firstly, when you pass control back to Qt, your code is no longer running. This means that whatever long-running thing you're trying to do will take <em>longer</em>. That is definitely not what you want.</p> <p>Secondly, processing events outside the main event loop (<code>app.exec_()</code>) causes your application to branch off into handling code (e.g. for triggered slots, or events) while within your loop. If your code depends on/responds to external state this can cause undefined behavior. The code below demonstrates this in action:</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs"><span class="hljs-keyword">from</span> PyQt5.QtGui <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">from</span> PyQt5.QtWidgets <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">from</span> PyQt5.QtCore <span class="hljs-keyword">import</span> *
+
+<span class="hljs-keyword">import</span> time
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MainWindow</span>(<span class="hljs-params">QMainWindow</span>):</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, *args, **kwargs</span>):</span>
+        <span class="hljs-built_in">super</span>(MainWindow, self).__init__(*args, **kwargs)
+
+        self.counter = <span class="hljs-number">0</span>
+
+        layout = QVBoxLayout()
+
+        self.l = QLabel(<span class="hljs-string">"Start"</span>)
+        b = QPushButton(<span class="hljs-string">"DANGER!"</span>)
+        b.pressed.connect(self.oh_no)
+
+        c = QPushButton(<span class="hljs-string">"?"</span>)
+        c.pressed.connect(self.change_message)
+
+        layout.addWidget(self.l)
+        layout.addWidget(b)
+
+        layout.addWidget(c)
+
+        w = QWidget()
+        w.setLayout(layout)
+
+        self.setCentralWidget(w)
+
+        self.show()
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">change_message</span>(<span class="hljs-params">self</span>):</span>
+        self.message = <span class="hljs-string">"OH NO"</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">oh_no</span>(<span class="hljs-params">self</span>):</span>
+        self.message = <span class="hljs-string">"Pressed"</span>
+
+        <span class="hljs-keyword">for</span> n <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">100</span>):
+            time.sleep(<span class="hljs-number">0.1</span>)
+            self.l.setText(self.message)
+            QApplication.processEvents()
+
+
+app = QApplication([])
+window = MainWindow()
+app.exec_()
+</code></pre></div> <p>If you run this code you'll see the counter as before. Pressing "DANGER!" will change the displayed text to "Pressed", as defined at the entry point to the <code>oh_no</code> function. However, if you press the "?" button while <code>oh_no</code> is still running you'll see that the message changes. State is being changed from outside your loop.</p> <p>This is a toy example. However, if you have multiple long-running processes within your application, with each calling <code>QApplication.processEvents()</code> to keep things ticking, your application behaviour can be unpredictable.</p> <h2 id="threads-and-processes">Threads and Processes</h2> <p>If you take a step back and think about what you want to happen in your application, it can probably be summed up with "stuff to happen at the same time as other stuff happens".</p> <p>There are two main approaches to running independent tasks within a PyQt application: <em>threads</em> and <em>processes</em>.</p> <p><em>Threads</em> share the same memory space, so are quick to start up and consume minimal resources. The shared memory makes it trivial to pass data between threads, however reading/writing memory from different threads can lead to race conditions or segfaults. In a Python GUI there is the added issue that multiple threads are bound by the same Global Interpreter Lock (GIL) — meaning non-GIL-releasing Python code can only execute in one thread at a time.&nbsp;However, this is not a major issue with PyQt where most of the time is spent outside of Python.</p> <p><em>Processes</em> use separate memory space (and an entirely separate Python interpreter). This side-steps any potential problems with the GIL, but at the cost of slower start-up times, larger memory overhead and complexity in sending/receiving data.</p> <p>For simplicity's sake it usually makes sense to use threads, unless you have a good reason to use processes (see <a href="https://www.pythonguis.com/tutorials/multithreading-pyqt-applications-qthreadpool/#caveats">caveats</a> later). Subprocesses in Qt are better suited to running and communicating with external programs.</p> <p class="admonition admonition-tip"><span class="admonition-kind"><i class="fas fa-lightbulb"></i></span>  There is nothing stopping you using pure-Python threading or process-based approaches within your PyQt application.</p> <h2 id="qrunnable-and-the-qthreadpool">QRunnable and the QThreadPool</h2> <p class="admonition admonition-tip"><span class="admonition-kind"><i class="fas fa-lightbulb"></i></span>  Do this.</p> <p>Qt provides a very simple interface for running jobs in other threads, which is exposed nicely in PyQt. This is built around two classes: <code>QRunnable</code> and <code>QThreadPool</code>. The former is the container for the work you want to perform, while the latter is the method by which you pass that work to alternate threads.</p> <p>The neat thing about using <code>QThreadPool</code> is that it handles queuing and execution of workers for you. Other than queuing up jobs and retreiving the results there is not very much to do at all.</p> <p>To define a custom <code>QRunnable</code> you can subclass the base <code>QRunnable</code> class, then place the code you wish you execute within the <code>run()</code> method. The following is an implementation of our long running <code>time.sleep</code> job as a <code>QRunnable</code>. Add the following code to <code>multithread.py</code>, above the <code>MainWindow</code> class definition.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Worker</span>(<span class="hljs-params">QRunnable</span>):</span>
+    <span class="hljs-string">'''
+    Worker thread
+    '''</span>
+
+<span class="hljs-meta">    @pyqtSlot()</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span>(<span class="hljs-params">self</span>):</span>
+        <span class="hljs-string">'''
+        Your code goes in this function
+        '''</span>
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">"Thread start"</span>)
+        time.sleep(<span class="hljs-number">5</span>)
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">"Thread complete"</span>)
+</code></pre></div> <p>Executing our function in another thread is simply a matter of creating an instance of the <code>Worker</code> and then pass it to our <code>QThreadPool</code> instance and it will be executed automatically.</p> <p>Next add the following within the <code>__init__</code> block, to set up our thread pool.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs">self.threadpool = QThreadPool()
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Multithreading with maximum %d threads"</span> % self.threadpool.maxThreadCount())
+</code></pre></div> <p>Finally, add the following lines to our <code>oh_no</code> function.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">oh_no</span>(<span class="hljs-params">self</span>):</span>
+    worker = Worker()
+    self.threadpool.start(worker)
+</code></pre></div> <p>Now, clicking on the button will create a worker to handle the (long-running) process and spin that off into another thread via thread pool. If there are not enough threads available to process incoming workers, they'll be queued and executed in order at a later time.</p> <p>Try it out and you'll see that your application now handles you bashing the button with no problems.</p> <p>Check what happens if you hit the button multiple times. You should see your threads executed immediately <em>up to</em> the number reported by <code>.maxThreadCount</code>. If you hit the button again after there are already this number of active workers, the subsequent workers will be queued until a thread becomes available.</p> <div class="product-block-container"><div class="pure-u-1-1 product-callout">Over <strong>10,000 developers</strong> have bought Create GUI Applications with Python &amp; Qt!</div> <div class="pure-g product-block"><div class="pure-u-1-1 product-banner"><a href="https://www.pythonguis.com/pyqt5-book/"><img src="./Multithreading PyQt5 applications with QThreadPool_files/pyqt5-book.png" alt="Create GUI Applications with Python &amp; Qt5" loading="lazy"></a> <div class="product-block-buttons"><a href="https://www.pythonguis.com/pyqt5-book/" target="_blank" class="pure-button button-info">More info</a> <a href="https://checkout.paddle.com/checkout/product/561130" rel="nofollow" data-theme="none" data-product="561130" data-coupon="" class="paddle_button pure-button button-buy" data-init="true">
+            Get the book
+        </a></div></div> <div class="pure-u-1-1 product-block-coupon"><p class="sale-notice"><strong>To support developers in </strong> I give a
+    <strong><i class="fas fa-gift"></i> % discount</strong>
+    with the code <strong></strong> — Enjoy!
+    </p> <!----></div></div> <div class="pure-g product-footer"><div class="pure-u-1-1 product-alternate-links">
+    Also available via
+<a href="https://mfitzp.gumroad.com/l/jgxBY/" class="buy-link">Gumroad</a><a href="https://www.leanpub.com/create-simple-gui-applications/" class="buy-link">Leanpub</a><a href="https://www.amazon.com/dp/B08RB2HRS1/" class="buy-link">Amazon Paperback</a></div></div></div><h2 id="improved-qrunnables">Improved QRunnables</h2> <p>If you want to pass custom data into the execution function you can do so via the init, and then have access to the data via <code>self.</code> from within the <code>run</code> slot.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Worker</span>(<span class="hljs-params">QRunnable</span>):</span>
+    <span class="hljs-string">'''
+    Worker thread
+
+    :param args: Arguments to make available to the run code
+    :param kwargs: Keywords arguments to make available to the run code
+
+    '''</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, *args, **kwargs</span>):</span>
+        <span class="hljs-built_in">super</span>(Worker, self).__init__()
+        self.args = args
+        self.kwargs = kwargs
+
+<span class="hljs-meta">    @pyqtSlot()</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span>(<span class="hljs-params">self</span>):</span>
+        <span class="hljs-string">'''
+        Initialise the runner function with passed self.args, self.kwargs.
+        '''</span>
+        <span class="hljs-built_in">print</span>(args, kwargs)
+</code></pre></div> <p>In fact, we can take advantage of the fact that in Python functions are objects and pass in the function to execute rather than subclassing each time. In the following construction we only require a single <code>Worker</code> class to handle all of our execution jobs.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Worker</span>(<span class="hljs-params">QRunnable</span>):</span>
+    <span class="hljs-string">'''
+    Worker thread
+
+    Inherits from QRunnable to handler worker thread setup, signals and wrap-up.
+
+    :param callback: The function callback to run on this worker thread. Supplied args and
+                     kwargs will be passed through to the runner.
+    :type callback: function
+    :param args: Arguments to pass to the callback function
+    :param kwargs: Keywords to pass to the callback function
+
+    '''</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, fn, *args, **kwargs</span>):</span>
+        <span class="hljs-built_in">super</span>(Worker, self).__init__()
+        <span class="hljs-comment"># Store constructor arguments (re-used for processing)</span>
+        self.fn = fn
+        self.args = args
+        self.kwargs = kwargs
+
+<span class="hljs-meta">    @pyqtSlot()</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span>(<span class="hljs-params">self</span>):</span>
+        <span class="hljs-string">'''
+        Initialise the runner function with passed args, kwargs.
+        '''</span>
+        self.fn(*self.args, **self.kwargs)
+</code></pre></div> <p>You can now pass in any Python function and have it executed in a separate thread.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">execute_this_fn</span>(<span class="hljs-params">self</span>):</span>
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">"Hello!"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">oh_no</span>(<span class="hljs-params">self</span>):</span>
+    <span class="hljs-comment"># Pass the function to execute</span>
+    worker = Worker(self.execute_this_fn) <span class="hljs-comment"># Any other args, kwargs are passed to the run function</span>
+
+    <span class="hljs-comment"># Execute</span>
+    self.threadpool.start(worker)
+</code></pre></div> <h2 id="thread-io">Thread IO</h2> <p>Sometimes it's helpful to be able to pass back <em>state</em> and <em>data</em> from running workers. This could include the outcome of calculations, raised exceptions or ongoing progress (think progress bars). Qt provides the <em>signals and slots</em> framework which allows you to do just that and is thread-safe, allowing safe communication directly from running threads to your GUI frontend. <em>Signals</em> allow you to <code>.emit</code> values, which are then picked up elsewhere in your code by <em>slot</em> functions which have been linked with <code>.connect</code>.</p> <p>Below is a simple <code>WorkerSignals</code> class defined to contain a number of example signals.</p> <p class="admonition admonition-note"><span class="admonition-kind"><i class="fas fa-pencil-alt"></i></span>  Custom signals can only be defined on objects derived from <code>QObject</code>. Since <code>QRunnable</code> is not derived from <code>QObject</code> we can't define the signals there directly. A custom QObject to hold the signals is the simplest solution.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs">
+<span class="hljs-keyword">import</span> traceback, sys
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">WorkerSignals</span>(<span class="hljs-params">QObject</span>):</span>
+    <span class="hljs-string">'''
+    Defines the signals available from a running worker thread.
+
+    Supported signals are:
+
+    finished
+        No data
+
+    error
+        tuple (exctype, value, traceback.format_exc() )
+
+    result
+        object data returned from processing, anything
+
+    '''</span>
+    finished = pyqtSignal()
+    error = pyqtSignal(<span class="hljs-built_in">tuple</span>)
+    result = pyqtSignal(<span class="hljs-built_in">object</span>)
+</code></pre></div> <p>In this example we've defined 3 custom signals:</p> <ol><li><em>finished</em> signal, with no data to indicate when the task is complete.</li> <li><em>error</em> signal which receives a <code>tuple</code> of <code>Exception</code> type, <code>Exception</code> value and formatted traceback.</li> <li><em>result</em> signal receiving any <code>object</code> type from the executed function.</li></ol> <p>You may not find a need for all of these signals, but they are included to give an indication of what is possible. In the following code we're going to implement a long-running task that makes use of these signals to provide useful information to the user.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Worker</span>(<span class="hljs-params">QRunnable</span>):</span>
+    <span class="hljs-string">'''
+    Worker thread
+
+    Inherits from QRunnable to handler worker thread setup, signals and wrap-up.
+
+    :param callback: The function callback to run on this worker thread. Supplied args and
+                     kwargs will be passed through to the runner.
+    :type callback: function
+    :param args: Arguments to pass to the callback function
+    :param kwargs: Keywords to pass to the callback function
+
+    '''</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, fn, *args, **kwargs</span>):</span>
+        <span class="hljs-built_in">super</span>(Worker, self).__init__()
+        <span class="hljs-comment"># Store constructor arguments (re-used for processing)</span>
+        self.fn = fn
+        self.args = args
+        self.kwargs = kwargs
+        self.signals = WorkerSignals()
+
+<span class="hljs-meta">    @pyqtSlot()</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span>(<span class="hljs-params">self</span>):</span>
+        <span class="hljs-string">'''
+        Initialise the runner function with passed args, kwargs.
+        '''</span>
+
+        <span class="hljs-comment"># Retrieve args/kwargs here; and fire processing using them</span>
+        <span class="hljs-keyword">try</span>:
+            result = self.fn(
+                *self.args, **self.kwargs
+            )
+        <span class="hljs-keyword">except</span>:
+            traceback.print_exc()
+            exctype, value = sys.exc_info()[:<span class="hljs-number">2</span>]
+            self.signals.error.emit((exctype, value, traceback.format_exc()))
+        <span class="hljs-keyword">else</span>:
+            self.signals.result.emit(result)  <span class="hljs-comment"># Return the result of the processing</span>
+        <span class="hljs-keyword">finally</span>:
+            self.signals.finished.emit()  <span class="hljs-comment"># Done</span>
+</code></pre></div> <p>You can connect your own handler functions to these signals to receive notification of completion (or the result) of threads.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs"><span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">execute_this_fn</span>(<span class="hljs-params">self</span>):</span>
+    <span class="hljs-keyword">for</span> n <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>, <span class="hljs-number">5</span>):
+        time.sleep(<span class="hljs-number">1</span>)
+    <span class="hljs-keyword">return</span> <span class="hljs-string">"Done."</span>
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">print_output</span>(<span class="hljs-params">self, s</span>):</span>
+    <span class="hljs-built_in">print</span>(s)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">thread_complete</span>(<span class="hljs-params">self</span>):</span>
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">"THREAD COMPLETE!"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">oh_no</span>(<span class="hljs-params">self</span>):</span>
+    <span class="hljs-comment"># Pass the function to execute</span>
+    worker = Worker(self.execute_this_fn) <span class="hljs-comment"># Any other args, kwargs are passed to the run function</span>
+    worker.signals.result.connect(self.print_output)
+    worker.signals.finished.connect(self.thread_complete)
+
+    <span class="hljs-comment"># Execute</span>
+    self.threadpool.start(worker)
+</code></pre></div> <p>You also often want to receive status information from long-running threads. This can be done by passing in <em>callbacks</em> to which your running code can send the information. You have two options here: either define new signals (allowing the handling to be performed using the event loop) or use a standard Python function.</p> <p>In both cases you'll need to pass these callbacks into your target function to be able to use them. The signal-based approach is used in the completed code below, where we pass an <code>int</code> back as an indicator of the thread's % progress.</p> <h2 id="the-complete-code">The complete code</h2> <p>A complete working example is given below, showcasing the custom <code>QRunnable</code> worker together with the worker &amp; progress signals. You should be able to easily adapt this code to any multithreaded application you develop.</p> <div class="code-block"><span class="code-block-language code-block-python">python</span> <pre><code class="python hljs"><span class="hljs-keyword">from</span> PyQt5.QtGui <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">from</span> PyQt5.QtWidgets <span class="hljs-keyword">import</span> *
+<span class="hljs-keyword">from</span> PyQt5.QtCore <span class="hljs-keyword">import</span> *
+
+<span class="hljs-keyword">import</span> time
+<span class="hljs-keyword">import</span> traceback, sys
+
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">WorkerSignals</span>(<span class="hljs-params">QObject</span>):</span>
+    <span class="hljs-string">'''
+    Defines the signals available from a running worker thread.
+
+    Supported signals are:
+
+    finished
+        No data
+
+    error
+        tuple (exctype, value, traceback.format_exc() )
+
+    result
+        object data returned from processing, anything
+
+    progress
+        int indicating % progress
+
+    '''</span>
+    finished = pyqtSignal()
+    error = pyqtSignal(<span class="hljs-built_in">tuple</span>)
+    result = pyqtSignal(<span class="hljs-built_in">object</span>)
+    progress = pyqtSignal(<span class="hljs-built_in">int</span>)
+
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Worker</span>(<span class="hljs-params">QRunnable</span>):</span>
+    <span class="hljs-string">'''
+    Worker thread
+
+    Inherits from QRunnable to handler worker thread setup, signals and wrap-up.
+
+    :param callback: The function callback to run on this worker thread. Supplied args and
+                     kwargs will be passed through to the runner.
+    :type callback: function
+    :param args: Arguments to pass to the callback function
+    :param kwargs: Keywords to pass to the callback function
+
+    '''</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, fn, *args, **kwargs</span>):</span>
+        <span class="hljs-built_in">super</span>(Worker, self).__init__()
+
+        <span class="hljs-comment"># Store constructor arguments (re-used for processing)</span>
+        self.fn = fn
+        self.args = args
+        self.kwargs = kwargs
+        self.signals = WorkerSignals()
+
+        <span class="hljs-comment"># Add the callback to our kwargs</span>
+        self.kwargs[<span class="hljs-string">'progress_callback'</span>] = self.signals.progress
+
+<span class="hljs-meta">    @pyqtSlot()</span>
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">run</span>(<span class="hljs-params">self</span>):</span>
+        <span class="hljs-string">'''
+        Initialise the runner function with passed args, kwargs.
+        '''</span>
+
+        <span class="hljs-comment"># Retrieve args/kwargs here; and fire processing using them</span>
+        <span class="hljs-keyword">try</span>:
+            result = self.fn(*self.args, **self.kwargs)
+        <span class="hljs-keyword">except</span>:
+            traceback.print_exc()
+            exctype, value = sys.exc_info()[:<span class="hljs-number">2</span>]
+            self.signals.error.emit((exctype, value, traceback.format_exc()))
+        <span class="hljs-keyword">else</span>:
+            self.signals.result.emit(result)  <span class="hljs-comment"># Return the result of the processing</span>
+        <span class="hljs-keyword">finally</span>:
+            self.signals.finished.emit()  <span class="hljs-comment"># Done</span>
+
+
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MainWindow</span>(<span class="hljs-params">QMainWindow</span>):</span>
+
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">__init__</span>(<span class="hljs-params">self, *args, **kwargs</span>):</span>
+        <span class="hljs-built_in">super</span>(MainWindow, self).__init__(*args, **kwargs)
+
+        self.counter = <span class="hljs-number">0</span>
+
+        layout = QVBoxLayout()
+
+        self.l = QLabel(<span class="hljs-string">"Start"</span>)
+        b = QPushButton(<span class="hljs-string">"DANGER!"</span>)
+        b.pressed.connect(self.oh_no)
+
+        layout.addWidget(self.l)
+        layout.addWidget(b)
+
+        w = QWidget()
+        w.setLayout(layout)
+
+        self.setCentralWidget(w)
+
+        self.show()
+
+        self.threadpool = QThreadPool()
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">"Multithreading with maximum %d threads"</span> % self.threadpool.maxThreadCount())
+
+        self.timer = QTimer()
+        self.timer.setInterval(<span class="hljs-number">1000</span>)
+        self.timer.timeout.connect(self.recurring_timer)
+        self.timer.start()
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">progress_fn</span>(<span class="hljs-params">self, n</span>):</span>
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">"%d%% done"</span> % n)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">execute_this_fn</span>(<span class="hljs-params">self, progress_callback</span>):</span>
+        <span class="hljs-keyword">for</span> n <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">0</span>, <span class="hljs-number">5</span>):
+            time.sleep(<span class="hljs-number">1</span>)
+            progress_callback.emit(n*<span class="hljs-number">100</span>/<span class="hljs-number">4</span>)
+
+        <span class="hljs-keyword">return</span> <span class="hljs-string">"Done."</span>
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">print_output</span>(<span class="hljs-params">self, s</span>):</span>
+        <span class="hljs-built_in">print</span>(s)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">thread_complete</span>(<span class="hljs-params">self</span>):</span>
+        <span class="hljs-built_in">print</span>(<span class="hljs-string">"THREAD COMPLETE!"</span>)
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">oh_no</span>(<span class="hljs-params">self</span>):</span>
+        <span class="hljs-comment"># Pass the function to execute</span>
+        worker = Worker(self.execute_this_fn) <span class="hljs-comment"># Any other args, kwargs are passed to the run function</span>
+        worker.signals.result.connect(self.print_output)
+        worker.signals.finished.connect(self.thread_complete)
+        worker.signals.progress.connect(self.progress_fn)
+
+        <span class="hljs-comment"># Execute</span>
+        self.threadpool.start(worker)
+
+
+    <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">recurring_timer</span>(<span class="hljs-params">self</span>):</span>
+        self.counter +=<span class="hljs-number">1</span>
+        self.l.setText(<span class="hljs-string">"Counter: %d"</span> % self.counter)
+
+
+app = QApplication([])
+window = MainWindow()
+app.exec_()
+</code></pre></div> <h2 id="caveats">Caveats</h2> <p>You may have spotted the slight flaw in this master plan — we are still making use of the event loop (and the <em>GUI thread</em>) to process the output of our workers.</p> <p>This isn't a problem when we're simply tracking progress, completion or returning metadata. However, if you have workers which return large amounts of data — e.g. loading large files, performing complex analysis and need (large) results, or querying databases — passing this data back through the GUI thread may cause performance problems and is best avoided.</p> <p>Similarly, if your application makes use of a large number of threads and Python result handlers, you may come up against the limitations of the GIL. As mentioned previously, when using threads execution of Python is limited to a single thread at one time. The Python code that handles signals from your threads can be blocked by your workers and <em>vice versa</em>. Since blocking your slot functions blocks the event loop, this can directly impact GUI responsiveness.</p> <p>In these cases it is often better to investigate using a pure-Python thread pool (e.g. concurrent futures) to keep your processing and thread-event handling further isolated from your GUI. However, note that <em>any</em> Python GUI code can block other Python code unless it's in a separate process.</p></div> <div class="pure-g controls-container"><div role="group" class="pure-button-group pure-u-1-1 center"><!----> <span class="mark-complete pure-button">Mark As Complete <i class="fas fa-magic"></i></span></div> <div class="pure-u-1-1 user-stats-box"><!----> <!----></div></div> <div class="continue-controls"><p class="navigation-continue">Continue with
+            <a href="https://www.pythonguis.com/tutorials/qprocess-external-programs/" title="Continue to next part">
+                PyQt5 Tutorial
+                <i class="fas fa-hand-point-right"></i></a></p> <p class="navigation-continue">
+                Return to <a href="https://www.pythonguis.com/pyqt5/">Create GUI Applications with PyQt5
+                <i class="fas fa-hand-point-right"></i></a></p></div></article></div></div> <div id="container-bottom" class="pure-g"><div class="email-container pure-u-1-1"><div class="email-signup"><h4>Never miss an update</h4> <p>Enjoyed this? Subscribe to get new updates straight in your Inbox.</p> <form action="https://static.mailerlite.com/webforms/submit/t8d2k4" data-code="t8d2k4" method="post" target="_blank" class="ml-block-form"><div class="pure-g"><input aria-label="email" aria-required="true" type="email" data-inputmask="" name="fields[email]" placeholder="Email" autocomplete="email" class="form-control pure-u-2-3"> <button type="submit" class="pure-button button-subscribe pure-u-1-3">Subscribe <i class="fas fa-envelope"></i></button></div> <div class="pure-g email-interest-groups"><input type="hidden" name="groups[]" value="107500789"></div> <input type="hidden" name="ml-submit" value="1"> <input type="hidden" name="anticsrf" value="true"> <p class="smallprint">You can unsubscribe anytime. Just ham, no spam.</p></form></div></div> <div class="article-products"></div> <div class="pure-u-1-1 l-box"><p class="metadata"><strong>Multithreading PyQt5 applications with QThreadPool</strong> was published in <a href="https://www.pythonguis.com/tutorials/">tutorials</a>
+
+        on <time datetime="2017-04-15T12:04:00+00:00">April 15, 2017</time>
+        (updated <time datetime="2022-08-11T09:37:38+00:00">August 11, 2022</time>)
+    </p> <p class="metadata"><a href="https://www.pythonguis.com/topics/multithreading/" class="tag tag-multithreading">multithreading</a> <a href="https://www.pythonguis.com/topics/responsive/" class="tag tag-responsive">responsive</a> <a href="https://www.pythonguis.com/topics/gui/" class="tag tag-gui">gui</a> <a href="https://www.pythonguis.com/topics/threading/" class="tag tag-threading">threading</a> <a href="https://www.pythonguis.com/topics/qt/" class="tag tag-qt">qt</a> <a href="https://www.pythonguis.com/topics/pyqt/" class="tag tag-pyqt">pyqt</a> <a href="https://www.pythonguis.com/topics/pyqt5/" class="tag tag-pyqt5">pyqt5</a> <a href="https://www.pythonguis.com/topics/concurrency/" class="tag tag-concurrency">concurrency</a> <a href="https://www.pythonguis.com/topics/performance/" class="tag tag-performance">performance</a> <a href="https://www.pythonguis.com/topics/python/" class="tag tag-python">python</a> <a href="https://www.pythonguis.com/topics/qt5/" class="tag tag-qt5">qt5</a> <a href="https://www.pythonguis.com/topics/pyqt5-concurrency/" class="tag tag-pyqt5-concurrency tag-pyqt5 tag-concurrency">pyqt5-concurrency</a></p></div></div></div> <footer class="pure-g"><div class="pure-u-1-1 footer-upper"><div class="pure-g"><div class="pure-u-1-1 pure-u-md-1-4"><ul><li><b>Topics</b></li> <li><a href="https://www.pythonguis.com/topics/data-science/">Data Science</a></li> <li><a href="https://www.pythonguis.com/topics/packaging/">Packaging &amp; Distribution</a></li> <li><a href="https://www.pythonguis.com/topics/databases/">Databases &amp; SQL</a></li> <li><a href="https://www.pythonguis.com/topics/qml/">QML/QtQuick</a></li> <li><a href="https://www.pythonguis.com/topics/foundation/">Learn the fundamentals</a></li> <li><a href="https://www.pythonguis.com/topics/getting-started/">Where do I begin?</a></li> <li><a href="https://www.pythonguis.com/topics/raspberry-pi/">Raspberry Pi</a></li> <li><a href="https://www.pythonguis.com/topics/games/">Games</a></li> <li><a href="https://www.pythonguis.com/topics/intermediate/">Start</a></li></ul></div> <div class="pure-u-1-1 pure-u-md-1-4"><ul><li><a href="https://www.pythonguis.com/installation/">Installation</a></li> <li><a href="https://www.pythonguis.com/tutorials/creating-your-first-window/">First steps with PyQt5</a></li> <li><a href="https://www.pythonguis.com/examples/">Example PyQt5 Apps</a></li> <li><a href="https://www.pythonguis.com/widgets/">Widget Library</a></li> <li><a href="https://www.pythonguis.com/docs/">PyQt / PySide documentation</a></li> <li><a href="https://www.pythonguis.com/code/">Reusable code &amp; snippets</a></li> <li><a href="https://www.pythonguis.com/faq/">Frequently Asked Questions</a></li></ul></div> <div class="pure-u-1-1 pure-u-md-1-4"><ul><li class="important"><a href="https://account.pythonguis.com/"><i class="fas fa-download"></i> Your
+            Downloads</a></li> <li><a href="https://www.pythonguis.com/pyqt5-book/">PyQt5 Book</a> / <a href="https://www.pythonguis.com/pyside2-book/">PySide2
+            Book</a></li> <li><a href="https://www.pythonguis.com/pyqt6-book/">PyQt6 Book</a> / <a href="https://www.pythonguis.com/pyside6-book/">PySide6
+          Book</a></li> <li><a href="https://www.pythonguis.com/packaging-book/">Python Packaging Book</a></li> <li><a href="https://www.pythonguis.com/books/downloads/"><i class="fas fa-code"></i> Book Source Code</a></li> <li><a href="https://www.pythonguis.com/pyqt5-tutorial/">PyQt5 tutorial</a></li> <li><a href="https://www.pythonguis.com/pyqt6-tutorial/">PyQt6 tutorial</a></li> <li><a href="https://www.pythonguis.com/pyside2-tutorial/">PySide2 tutorial</a></li> <li><a href="https://www.pythonguis.com/pyside6-tutorial/">PySide6 tutorial</a></li> <li><a href="https://www.pythonguis.com/blog/">Latest articles</a></li></ul></div> <div class="pure-u-1-1 pure-u-md-1-4"><ul><li><a href="https://www.pythonguis.com/about/">About</a></li> <li><a href="https://www.pythonguis.com/hire/">Hire me</a></li> <li><a href="https://www.pythonguis.com/live/">1-on-1 mentoring</a></li> <li><a href="https://www.pythonguis.com/write/">Write with me</a></li> <li><a href="https://mfitzp.getrewardful.com/signup">Become an affiliate</a></li> <li><a href="https://www.pythonguis.com/contact/">Contact me</a></li> <li><a href="https://www.pythonguis.com/legal/">Licensing, Privacy &amp; Legal</a></li></ul></div></div></div> <div class="pure-u-1-1 footer-final"><div class="pure-u-1-1 social-links"><p class="social-links-notice">Follow us for new tutorials</p> <div class="subscribe-social-links"><a href="https://twitter.com/pythonguis" class="twitter"><i class="fab fa-twitter"></i></a> <a href="https://github.com/pythonguis" class="github"><i class="fab fa-github-alt"></i></a> <a href="https://www.facebook.com/pythonguis" class="facebook"><i class="fab fa-facebook"></i></a> <a href="https://www.youtube.com/channel/UCMW4KwSlygaDef0tgqPjbRQ" class="youtube"><i class="fab fa-youtube"></i></a> <a href="https://www.linkedin.com/company/pythonguis/" class="linkedin"><i class="fab fa-linkedin"></i></a></div></div> <p><a href="https://www.pythonguis.com/">Python GUIs</a>
+      Copyright ©2014-2022
+      <a href="https://www.mfitzp.com/"> Martin Fitzpatrick</a></p> <p>
+      Tutorials CC-BY-NC-SA
+      <i class="fab fa-creative-commons"></i> <i class="fab fa-creative-commons-by"></i> <i class="fab fa-creative-commons-nc"></i> <i class="fab fa-creative-commons-sa"></i>
+      &nbsp;
+      <a href="https://www.pythonguis.com/sitemap/">Sitemap</a>
+      &nbsp;
+      Public code <a href="https://opensource.org/licenses/BSD-2-Clause" rel="nofollow">BSD</a> &amp; <a href="https://opensource.org/licenses/MIT" rel="nofollow">MIT</a></p></div></footer></div></div>
+
+    <script type="text/javascript" src="./Multithreading PyQt5 applications with QThreadPool_files/vue.min.js.download"></script>
+    <script type="text/javascript" src="./Multithreading PyQt5 applications with QThreadPool_files/vue2-filters.min.js.download"></script>
+    <script type="text/javascript" src="./Multithreading PyQt5 applications with QThreadPool_files/vue-observe-visibility.min.js.download"></script>
+        <script type="text/javascript" src="./Multithreading PyQt5 applications with QThreadPool_files/axios.min.js.download"></script>
+
+    <script type="text/javascript">
+
+var localizedDiscount = {'WE5GY0': 50, 'DQ3JY5': 35};
+
+var vm = new Vue({
+  delimiters: ['[[', ']]'],
+  el: '#app',
+  data: {
+    user: {
+        completed: [],
+        library: 'all',
+        streak: 4,
+        lastCompletedDate: false
+    },
+    staticurl: 'https://www.pythonguis.com/',
+    siteurl: 'https://www.pythonguis.com/',
+    apiurl: 'https://api.pythonguis.com',
+    hidden: ['installation'],
+    landed: document.referrer != 'https://www.pythonguis.com/',
+    defaultLibrary: 'all', // the default library to prefer content for
+    // video
+    video: '',
+    is_video_loaded: false,
+    countryCode: '',
+    countryRegion: '',
+    activeDiscount: false,
+    couponCode: '',
+    localizedPrices: true,
+    comments: false,
+    curriculum: [],
+    current_page_id: null,
+    gumroadAffiliateId: false,
+    query: '',
+    searchResults: [],
+    showMenu: false
+  },
+  methods: {
+    init: function() {
+        this.load_user_data();
+        this.validate_streak();
+    },
+    toggle_menu: function() {
+        this.showMenu = !this.showMenu;
+    },
+    discount_active: function () {
+        return (this.localizedPrices || this.activeDiscount)
+    },
+    discounted_price: function (price) {
+        var pc = false;
+        if (this.localizedPrices) {
+            pc = localizedDiscount[this.couponCode]
+        } else if (this.activeDiscount) {
+            pc = this.activeDiscount.discount;
+        }
+
+        if (pc != false) {
+            pc = (100 - pc) / 100;
+            return Math.ceil(price * pc)
+        }
+
+        return price
+    },
+    load_user_data: function() {
+        var userdata = localStorage.getItem('user');
+        if (userdata) {
+            Object.assign(this.user, JSON.parse(userdata));
+        }
+        if (this.user.library == undefined) { this.user.library = this.defaultLibrary; }
+    },
+    maybe_play_video: function() {
+        if (this.video && !this.is_video_loaded) {
+            this.play_video();
+        }
+    },
+    get_gumroad_product_url: function(url, qs) {
+        window.setTimeout(function (){ GumroadOverlay.resetLinks() }, 1000);
+
+        if (this.couponCode) {
+            qs = '?' + qs; // '?offer_code=' + this.couponCode + '&' + qs
+        } else {
+            qs = '?' + qs;
+        }
+
+        if (this.gumroadAffiliateId) {
+            return url + qs + '&affiliate_id=' + this.gumroadAffiliateId;
+        } else {
+            return url + qs;
+        }
+
+    },
+    localize: function() {
+        console.log("Localize.");
+        var localdata = localStorage.getItem('localization');
+
+        if (!localdata || localdata == 'undefined') {
+            // Will callback on complete of API request.
+            return this.get_localization()
+        }
+
+        localdata = JSON.parse(localdata)
+        this.countryCode = localdata.iso_code;
+        this.countryRegion = localdata.region;
+        // Don't localize, if site-wide is bigger.
+        if (this.activeDiscount && (localizedDiscount[localdata.discount] <= this.activeDiscount.discount)) {
+            console.log("Active discount in effect.");
+            this.localizedPrices = false;
+            return false;
+        }
+        console.log("Prices localized.");
+        this.couponCode = localdata.discount;
+        this.localizedPrices = true;
+
+
+    },
+    get_localization: function() {
+        var self = this;
+        console.log("Localization API request.");
+        axios
+            .get(self.apiurl + '/api/v1/localize/')
+            .then(function (response){
+                if (response.data.success){
+                    localStorage.setItem('localization', JSON.stringify(response.data.localization));
+                    self.localize();
+                }
+
+            })
+    },
+    play_video: function() {
+        var url = (this.video.includes('https://') ? this.video:'https://vimeo.com/' + this.video),
+            options = {
+                url: url,
+                responsive: true,
+                dnt: true,
+            };
+        var player = new Vimeo.Player('player', options);
+        this.is_video_loaded = true;
+    },
+    is_hidden: function(id) {
+        return this.hidden.includes(id);
+    },
+    unhide: function(id) {
+        var index = this.hidden.indexOf(id);
+        if (index !== -1){
+            this.hidden.splice(index, 1);
+        }
+    },
+    toggle_tutorial_complete: function (id) {
+        var completed = this.user.completed;
+
+        if (completed.includes(id)){
+            var index = this.user.completed.indexOf(id);
+            if (index !== -1){
+                this.user.completed.splice(index, 1);
+            }
+
+        } else {
+            // Add this tutorial to the list.
+            this.user.completed.push(id);
+            this.update_streak();
+            plausible('completed');
+        }
+        //$set(this.user.completed, completed);
+        this.save_user();
+    },
+    update_streak: function () {
+        var dt = new Date(),
+            thresholdDt = new Date();
+        thresholdDt.setHours(0,0,0,0);
+        thresholdDt.setDate(thresholdDt.getDate() - 1);
+        if (this.user.lastCompletedDate == false || this.user.lastCompletedDate < thresholdDt) {
+            this.user.lastCompletedDate = dt;
+            this.user.streak = 0;
+        } else {
+            var lastCompletedDt = new Date(this.user.lastCompletedDate);
+            lastCompletedDt.setHours(0,0,0,0);
+            if (lastCompletedDt.getTime() == thresholdDt.getTime()) {
+                this.user.lastCompletedDate = dt;
+                this.user.streak += 1;
+                plausible('streak');
+            }
+        }
+    },
+    validate_streak: function () {
+        // Check on login that last complete < 1 day ago.
+        // nb. not 24 hrs.
+        var thresholdDt = new Date();
+        thresholdDt.setHours(0,0,0,0);
+        thresholdDt.setDate(thresholdDt.getDate() - 1);
+        console.log(thresholdDt);
+        if (this.user.lastCompletedDate == false || this.user.lastCompletedDate < thresholdDt) {
+            this.user.streak = 0;
+            this.save_user();
+        }
+    },
+    set_library: function (library) {
+        this.user.library = library;
+        this.save_user();
+    },
+    library_is: function (library) {
+        return library == this.user.library
+    },
+    library_is_or_all: function (library) {
+        return this.library_is(library) || this.user.library == 'all';
+    },
+    save_user: function () {
+        localStorage.setItem('user', JSON.stringify(this.user));
+    },
+    switch_tab: function(e) {
+        var clickedtab = e.target,
+            tabid = clickedtab.getAttribute('data-tab');
+
+        // Update tab display.
+        siblings = clickedtab.parentNode.querySelectorAll('li');
+        [].forEach.call(siblings, function(el) {
+            el.classList.remove("current");
+        });
+
+        clickedtab.classList.add("current");
+
+        // Change the active code block.
+        codecontainer = clickedtab.parentNode.parentNode;
+        codeblocks = codecontainer.querySelectorAll('.tab-content');
+        [].forEach.call(codeblocks, function(el) {
+            el.classList.remove("current");
+            if (el.id == tabid){el.classList.add('current');}
+        });
+    },
+
+  }
+});
+
+Vue.set(vm, 'current_page_id', 'multithreading-pyqt-applications-qthreadpool');
+vm.init();
+vm.localize();
+
+function playVideo (isVisible, entry) {
+    var video = entry.target;
+    if (isVisible){
+        video.play();
+    } else if (video.currentTime > 0 && !video.paused && !video.ended && video.readyState > 2) {
+        video.pause();
+    }
+}
+
+
+function celebrate (event) {
+    confetti({
+        colors: ['#1A936F', '#C0D9E5', '#FFBA08', '#006494'],
+        origin: {
+          x: event.clientX / window.innerWidth,
+          y: event.clientY / window.innerHeight
+        }
+      });
+}
+
+
+
+    </script>
+
+
+
+<script type="text/javascript">
+
+</script>
+
+
+    <script defer="" src="./Multithreading PyQt5 applications with QThreadPool_files/2.0.0" type="module" integrity="sha384-D7B5eODAUd397+f4zNFAVlnDNDtO1ppV8rPnfygILQXhqu3cUndgHvlcJR2Bhig8"></script>
+
+    <script src="./Multithreading PyQt5 applications with QThreadPool_files/highlight.min.js.download"></script>
+    <script>
+        window.addEventListener('load', function () {
+            hljs.highlightAll();
+        });
+    </script>
+    <script src="./Multithreading PyQt5 applications with QThreadPool_files/confetti.browser.min.js.download"></script>
+<script src="./Multithreading PyQt5 applications with QThreadPool_files/paddle.js.download"></script>
+<script type="text/javascript">
+    Paddle.Setup({ vendor: 16090 });
+</script>
+
+
+</body></html>
